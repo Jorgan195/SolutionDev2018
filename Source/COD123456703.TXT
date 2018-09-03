@@ -1,0 +1,42 @@
+OBJECT Codeunit 123456703 Seminar Document-Print
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/06/13;
+    Time=19:24:40;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+
+    PROCEDURE PrintSeminarRegistrationHeader@1(SeminarRegHeader@1000 : Record 123456710);
+    VAR
+      ReportSelection@1001 : Record 123456705;
+    BEGIN
+      SeminarRegHeader.SETRECFILTER;
+      ReportSelection.SETRANGE(Usage,ReportSelection.Usage::Registration);
+      ReportSelection.SETFILTER("Report ID",'<>0');
+      ReportSelection.ASCENDING := FALSE;
+      ReportSelection.FIND('-');
+      REPEAT
+        REPORT.RUNMODAL(ReportSelection."Report ID",TRUE,FALSE,SeminarRegHeader);
+      UNTIL ReportSelection.NEXT = 0;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-06-01 - D. E. Veloper
+        Chapter 6 - Lab 1
+          - Created new codeunit
+    }
+    END.
+  }
+}
+

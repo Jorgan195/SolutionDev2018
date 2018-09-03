@@ -1,0 +1,71 @@
+OBJECT Modification "Resource List"(Page 77)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=10:12:39;
+    Modified=Yes;
+    Version List=NAVW111.00.00.21836,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Resource List"(Page 77);
+    TargetPageType=List;
+  }
+  CHANGES
+  {
+    { Insertion         ;InsertAfter=Control 4;
+                         ChangedElements=ControlCollection
+                         {
+                           { 37  ;2   ;Field     ;
+                                       SourceExpr="Internal/External" }
+
+                           { 30  ;2   ;Field     ;
+                                       SourceExpr="Maximum Participants";
+                                       Visible=ShowMaxParticipants }
+
+                         }
+                          }
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-02-01 - D. E. Veloper
+                                           Chapter 2 - Lab 1
+                                             - Added the Internal/External field to the Repeater control
+                                             - Added the Maximum Participants field to the Repeater control
+                                       END;
+                                        }
+    { CodeModification  ;OriginalCode=BEGIN
+                                        CRMIntegrationEnabled := CRMIntegrationManagement.IsCRMIntegrationEnabled;
+                                      END;
+
+                         ModifiedCode=BEGIN
+                                        CRMIntegrationEnabled := CRMIntegrationManagement.IsCRMIntegrationEnabled;
+
+                                        //CSD1.00>
+                                        FILTERGROUP(3);
+                                        ShowType := GETFILTER(Type) = '';
+                                        ShowMaxParticipants := GETFILTER(Type) = FORMAT(Type::Machine);
+                                        FILTERGROUP(0);
+                                        //CSD1.00<
+                                      END;
+
+                         Target=OnOpenPage }
+    { Insertion         ;InsertAfter=CRMIsCoupledToRecord(Variable 1000);
+                         ChangedElements=VariableCollection
+                         {
+                           ShowType@1003 : Boolean INDATASET;
+                           ShowMaxParticipants@1002 : Boolean INDATASET;
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.21836;
+                         ModifiedValue=NAVW111.00.00.21836,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

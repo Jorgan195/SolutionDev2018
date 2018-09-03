@@ -1,0 +1,196 @@
+OBJECT Page 123456711 Seminar Registration Subform
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=23:16:42;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Lines;
+    SourceTable=Table123456711;
+    DelayedInsert=Yes;
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+    OnAfterGetRecord=BEGIN
+                       ShowShortcutDimCode(ShortcutDimCode);
+                     END;
+
+    OnNewRecord=BEGIN
+                  CLEAR(ShortcutDimCode);
+                END;
+
+    ActionList=ACTIONS
+    {
+      { 23      ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 24      ;1   ;ActionGroup;
+                      CaptionML=ENU=&Line }
+      { 25      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=ENU=Dimensions;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Bill-to Customer No.";
+                OnValidate=BEGIN
+                             ShowShortcutDimCode(ShortcutDimCode);
+                           END;
+                            }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr="Participant Contact No." }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr="Participant Name" }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=Participated }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Registration Date" }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr="Confirmation Date" }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="To Invoice" }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr=Registered }
+
+    { 11  ;2   ;Field     ;
+                SourceExpr="Seminar Price" }
+
+    { 12  ;2   ;Field     ;
+                SourceExpr="Line Discount %" }
+
+    { 13  ;2   ;Field     ;
+                SourceExpr="Line Discount Amount" }
+
+    { 14  ;2   ;Field     ;
+                SourceExpr=Amount }
+
+    { 22  ;2   ;Field     ;
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 21  ;2   ;Field     ;
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[3];
+                CaptionClass='1,2,3';
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(3,ShortcutDimCode[3]);
+                           END;
+
+                OnLookup=BEGIN
+                           LookupShortcutDimCode(3,ShortcutDimCode[3]);
+                         END;
+                          }
+
+    { 19  ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[4];
+                CaptionClass='1,2,4';
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(4,ShortcutDimCode[4]);
+                           END;
+
+                OnLookup=BEGIN
+                           LookupShortcutDimCode(4,ShortcutDimCode[4]);
+                         END;
+                          }
+
+    { 18  ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[5];
+                CaptionClass='1,2,5';
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(5,ShortcutDimCode[5]);
+                           END;
+
+                OnLookup=BEGIN
+                           LookupShortcutDimCode(5,ShortcutDimCode[5]);
+                         END;
+                          }
+
+    { 17  ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[6];
+                CaptionClass='1,2,6';
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(6,ShortcutDimCode[6]);
+                           END;
+
+                OnLookup=BEGIN
+                           LookupShortcutDimCode(6,ShortcutDimCode[6]);
+                         END;
+                          }
+
+    { 16  ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[7];
+                CaptionClass='1,2,7';
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(7,ShortcutDimCode[7]);
+                           END;
+
+                OnLookup=BEGIN
+                           LookupShortcutDimCode(7,ShortcutDimCode[7]);
+                         END;
+                          }
+
+    { 15  ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[8];
+                CaptionClass='1,2,8';
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(8,ShortcutDimCode[8]);
+                           END;
+
+                OnLookup=BEGIN
+                           LookupShortcutDimCode(8,ShortcutDimCode[8]);
+                         END;
+                          }
+
+  }
+  CODE
+  {
+    VAR
+      ShortcutDimCode@1000 : ARRAY [8] OF Code[20];
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-02 - D. E. Veloper
+        Chapter 3 - Lab 2
+          - Created new page
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added fields for Shortcut Dimensions
+          - Added actions
+    }
+    END.
+  }
+}
+

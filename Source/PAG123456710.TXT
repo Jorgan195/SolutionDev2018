@@ -1,0 +1,225 @@
+OBJECT Page 123456710 Seminar Registration
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/10/13;
+    Time=01:24:25;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Registration;
+    SourceTable=Table123456710;
+    PageType=Document;
+    ActionList=ACTIONS
+    {
+      { 31      ;    ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 32      ;1   ;ActionGroup;
+                      CaptionML=ENU=&Seminar Registration }
+      { 33      ;2   ;Action    ;
+                      CaptionML=ENU=Co&mments;
+                      RunObject=Page 123456706;
+                      RunPageView=WHERE(Document Type=CONST(Seminar Registration));
+                      RunPageLink=No.=FIELD(No.);
+                      Image=Comment }
+      { 34      ;2   ;Action    ;
+                      CaptionML=ENU=&Charges;
+                      RunObject=Page 123456724;
+                      RunPageLink=Document No.=FIELD(No.);
+                      Image=Costs }
+      { 43      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=ENU=Dimensions;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDocDim;
+                                 CurrPage.SAVERECORD;
+                               END;
+                                }
+      { 38      ;0   ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 44      ;1   ;Action    ;
+                      CaptionML=ENU=Send Registration Co&nfirmations;
+                      Promoted=Yes;
+                      Image=SendConfirmation;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 SemMailMgt.SendConfirmations(Rec);
+                               END;
+                                }
+      { 39      ;1   ;ActionGroup;
+                      CaptionML=ENU=Posting }
+      { 40      ;2   ;Action    ;
+                      ShortCutKey=F9;
+                      CaptionML=ENU=P&ost;
+                      RunObject=Codeunit 123456701;
+                      Promoted=Yes;
+                      Image=PostDocument;
+                      PromotedCategory=Process }
+      { 41      ;1   ;ActionGroup;
+                      CaptionML=ENU=&Print;
+                      Image=Print }
+      { 42      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=ENU=Participants &List;
+                      Image=Print;
+                      OnAction=BEGIN
+                                 SemDocPrint.PrintSeminarRegistrationHeader(Rec);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=General;
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="No.";
+                OnAssistEdit=BEGIN
+                               IF AssistEdit(xRec) THEN
+                                 CurrPage.UPDATE;
+                             END;
+                              }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr="Starting Date" }
+
+    { 37  ;2   ;Field     ;
+                SourceExpr="Seminar No." }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr="Seminar Name" }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr="Instructor Resource No." }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Instructor Name" }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr="Posting Date" }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="Document Date" }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr=Status }
+
+    { 11  ;2   ;Field     ;
+                SourceExpr=Duration }
+
+    { 12  ;2   ;Field     ;
+                SourceExpr="Minimum Participants" }
+
+    { 13  ;2   ;Field     ;
+                SourceExpr="Maximum Participants" }
+
+    { 36  ;1   ;Part      ;
+                Name=SeminarRegistrationLines;
+                SubPageLink=Document No.=FIELD(No.);
+                PagePartID=Page123456711;
+                PartType=Page }
+
+    { 14  ;1   ;Group     ;
+                Name=Seminar Room;
+                GroupType=Group }
+
+    { 15  ;2   ;Field     ;
+                SourceExpr="Room Resource No." }
+
+    { 16  ;2   ;Field     ;
+                SourceExpr="Room Name" }
+
+    { 17  ;2   ;Field     ;
+                SourceExpr="Room Address" }
+
+    { 18  ;2   ;Field     ;
+                SourceExpr="Room Address 2" }
+
+    { 19  ;2   ;Field     ;
+                SourceExpr="Room Post Code" }
+
+    { 20  ;2   ;Field     ;
+                SourceExpr="Room City" }
+
+    { 21  ;2   ;Field     ;
+                SourceExpr="Room Country/Reg. Code" }
+
+    { 22  ;2   ;Field     ;
+                SourceExpr="Room County" }
+
+    { 23  ;1   ;Group     ;
+                Name=Invoicing;
+                GroupType=Group }
+
+    { 24  ;2   ;Field     ;
+                SourceExpr="Gen. Prod. Posting Group" }
+
+    { 25  ;2   ;Field     ;
+                SourceExpr="VAT Prod. Posting Group" }
+
+    { 26  ;2   ;Field     ;
+                SourceExpr="Seminar Price" }
+
+    { 27  ;0   ;Container ;
+                ContainerType=FactBoxArea }
+
+    { 35  ;1   ;Part      ;
+                SubPageLink=No.=FIELD(Seminar No.);
+                PagePartID=Page123456717;
+                PartType=Page }
+
+    { 28  ;1   ;Part      ;
+                SubPageLink=No.=FIELD(Bill-to Customer No.);
+                PagePartID=Page9084;
+                ProviderID=36;
+                PartType=Page }
+
+    { 29  ;1   ;Part      ;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 30  ;1   ;Part      ;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      SemDocPrint@1000 : Codeunit 123456703;
+      SemMailMgt@1001 : Codeunit 123456705;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-02 - D. E. Veloper
+        Chapter 3 - Lab 2
+          - Created new page
+
+      CSD1.00 - 2013-04-05 - D. E. Veloper
+        Chapter 4 - Lab 5
+          - Added the Post action
+
+      CSD1.00 - 2013-06-01 - D. E. Veloper
+        Chapter 6 - Lab 1
+          - Added the Print action
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added the Dimensions action
+
+      CSD1.00 - 2013-10-01 - D. E. Veloper
+        Chapter 10 - Lab 1
+          - Added the Send Send Registration Confirmations action
+    }
+    END.
+  }
+}
+

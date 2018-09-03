@@ -1,0 +1,206 @@
+OBJECT MenuSuite 1090 Dept - Company
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/09/13;
+    Time=00:56:59;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+  }
+  MENUNODES
+  {
+    {                ;[{19A352FE-D90D-424E-B85F-CF3B8E98CF0E}] ;NextNodeID=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                VisibleInDesign=Yes }
+    { Menu           ;[{DE811AED-50EF-4C23-AD80-65F45326AE9F}] ;Name=Seminar Management;
+                                                                CaptionML=ENU=Seminar Management;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                Image=13;
+                                                                IsShortcut=No;
+                                                                Visible=Yes;
+                                                                Enabled=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                FirstChild=[{9CD59822-D296-4712-BAB0-25D581D62702}] }
+    {                ;[{7D7FE6BF-817A-4E6B-AB93-BEBEE1AA2C1C}] ;VisibleInDesign=Yes }
+    { MenuGroup      ;[{9CD59822-D296-4712-BAB0-25D581D62702}] ;Name=Seminarsµ!;
+                                                                CaptionML=ENU=Seminars;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{306FC806-7E65-4EF4-A3D8-664FDC2CFEC6}];
+                                                                FirstChild=[{62F1FB90-2366-4F02-939D-F2A6075B5426}] }
+    { MenuItem       ;[{62F1FB90-2366-4F02-939D-F2A6075B5426}] ;Name=Contacts;
+                                                                CaptionML=ENU=Contacts;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=5052;
+                                                                ParentNodeID=[{9CD59822-D296-4712-BAB0-25D581D62702}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{C53BB9BA-19DC-4E2C-96A2-204B78C9B131}];
+                                                                DepartmentCategory=Lists }
+    { MenuItem       ;[{C53BB9BA-19DC-4E2C-96A2-204B78C9B131}] ;Name=Customers;
+                                                                CaptionML=ENU=Customers;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=22;
+                                                                ParentNodeID=[{9CD59822-D296-4712-BAB0-25D581D62702}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{5D2EE33B-77A4-472C-BCA7-789A8268D055}];
+                                                                DepartmentCategory=Lists }
+    { MenuItem       ;[{5D2EE33B-77A4-472C-BCA7-789A8268D055}] ;Name=Seminars;
+                                                                CaptionML=ENU=Seminars;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456701;
+                                                                ParentNodeID=[{9CD59822-D296-4712-BAB0-25D581D62702}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{856081A2-A855-46A3-912C-B5AEECD80585}];
+                                                                DepartmentCategory=Lists }
+    { MenuGroup      ;[{856081A2-A855-46A3-912C-B5AEECD80585}] ;Name=Periodic Activities;
+                                                                CaptionML=ENU=Periodic Activities;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{9CD59822-D296-4712-BAB0-25D581D62702}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                FirstChild=[{9A3713C7-A175-4406-9E2C-ABB4DD633A7B}] }
+    {                ;[{F8D2429D-034B-4C58-9B5E-81BE962DB1BC}] ;VisibleInDesign=Yes }
+    {                ;[{2DC8C4FE-7346-4124-8C20-383346384C03}] ;VisibleInDesign=Yes }
+    {                ;[{03134937-C76A-4D80-A8B2-FF6458E180EB}] ;VisibleInDesign=Yes }
+    {                ;[{8D5D65D8-68A2-4A84-9BCE-3742CEDA47BF}] ;VisibleInDesign=Yes }
+    {                ;[{4444D15F-6F71-4058-A823-C35BD171B04A}] ;VisibleInDesign=Yes }
+    {                ;[{5C118B9B-F148-41D7-AD4F-0CC538805B8F}] ;VisibleInDesign=Yes }
+    {                ;[{64D31502-DCE9-45A4-BCD9-93881FB8B4E7}] ;VisibleInDesign=Yes }
+    {                ;[{3F1D5EE3-5D38-4692-AC2F-E43C299726CF}] ;VisibleInDesign=Yes }
+    { MenuItem       ;[{9A3713C7-A175-4406-9E2C-ABB4DD633A7B}] ;Name=Create Invoices;
+                                                                CaptionML=ENU=Create Invoices;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Report;
+                                                                RunObjectID=123456700;
+                                                                ParentNodeID=[{856081A2-A855-46A3-912C-B5AEECD80585}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                DepartmentCategory=Tasks }
+    { MenuGroup      ;[{306FC806-7E65-4EF4-A3D8-664FDC2CFEC6}] ;Name=Order Processingµ!;
+                                                                CaptionML=ENU=Order Processing;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{42EFF59F-4FDB-4A61-AC48-10D2BE090263}];
+                                                                FirstChild=[{52B896EE-182C-4906-998F-1969B3F0F0D4}] }
+    { MenuItem       ;[{52B896EE-182C-4906-998F-1969B3F0F0D4}] ;Name=Seminar Registrations;
+                                                                CaptionML=ENU=Seminar Registrations;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456713;
+                                                                ParentNodeID=[{306FC806-7E65-4EF4-A3D8-664FDC2CFEC6}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{E9778C4A-4FCA-4F5C-AAB0-6D370DCBA2A6}];
+                                                                DepartmentCategory=Documents }
+    { MenuItem       ;[{E9778C4A-4FCA-4F5C-AAB0-6D370DCBA2A6}] ;Name=Sales Invoices;
+                                                                CaptionML=ENU=Sales Invoices;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=9301;
+                                                                ParentNodeID=[{306FC806-7E65-4EF4-A3D8-664FDC2CFEC6}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{87965A03-121D-48AE-A3FE-3D3D2F13E8E3}];
+                                                                DepartmentCategory=Documents }
+    { MenuGroup      ;[{42EFF59F-4FDB-4A61-AC48-10D2BE090263}] ;Name=History;
+                                                                CaptionML=ENU=History;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{9E3A85A3-7F96-4213-8960-1A0E66AC06EA}];
+                                                                FirstChild=[{F4C02E63-E49C-485B-8698-B083CBA7517B}] }
+    { MenuItem       ;[{F4C02E63-E49C-485B-8698-B083CBA7517B}] ;Name=Posted Seminar Registrations;
+                                                                CaptionML=ENU=Posted Seminar Registrations;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456736;
+                                                                ParentNodeID=[{42EFF59F-4FDB-4A61-AC48-10D2BE090263}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{172171DE-8252-45CF-85CE-F94F86EF0EE2}];
+                                                                DepartmentCategory=History }
+    { MenuItem       ;[{172171DE-8252-45CF-85CE-F94F86EF0EE2}] ;Name=Posted Sales Invoices;
+                                                                CaptionML=ENU=Posted Sales Invoices;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=143;
+                                                                ParentNodeID=[{42EFF59F-4FDB-4A61-AC48-10D2BE090263}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{B7A245FD-9A07-43E7-AB00-531148F3A700}];
+                                                                DepartmentCategory=History }
+    { MenuItem       ;[{B7A245FD-9A07-43E7-AB00-531148F3A700}] ;Name=Seminar Registers;
+                                                                CaptionML=ENU=Seminar Registers;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456722;
+                                                                ParentNodeID=[{42EFF59F-4FDB-4A61-AC48-10D2BE090263}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{21CC11D5-06E8-49E2-9181-2C45357B6FB7}];
+                                                                DepartmentCategory=History }
+    { MenuItem       ;[{21CC11D5-06E8-49E2-9181-2C45357B6FB7}] ;Name=Navigate;
+                                                                CaptionML=ENU=Navigate;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=344;
+                                                                ParentNodeID=[{42EFF59F-4FDB-4A61-AC48-10D2BE090263}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                DepartmentCategory=History }
+    { MenuGroup      ;[{9E3A85A3-7F96-4213-8960-1A0E66AC06EA}] ;Name=Setup;
+                                                                CaptionML=ENU=Setup;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                FirstChild=[{E2194E29-0231-4F31-A777-253239D84AA1}] }
+    { MenuItem       ;[{E2194E29-0231-4F31-A777-253239D84AA1}] ;Name=Seminar Setup;
+                                                                CaptionML=ENU=Seminar Setup;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456702;
+                                                                ParentNodeID=[{9E3A85A3-7F96-4213-8960-1A0E66AC06EA}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{710736B9-FEEA-4D6B-BE2C-32936B7CE04D}];
+                                                                DepartmentCategory=Administration }
+    { MenuItem       ;[{710736B9-FEEA-4D6B-BE2C-32936B7CE04D}] ;Name=Seminar Charges;
+                                                                CaptionML=ENU=Seminar Charges;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456724;
+                                                                ParentNodeID=[{9E3A85A3-7F96-4213-8960-1A0E66AC06EA}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{65B9C80D-292F-4D27-9DE7-BA06EDBC71BA}];
+                                                                DepartmentCategory=Administration }
+    { MenuGroup      ;[{87965A03-121D-48AE-A3FE-3D3D2F13E8E3}] ;Name=Reports;
+                                                                CaptionML=ENU=Reports;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                ParentNodeID=[{306FC806-7E65-4EF4-A3D8-664FDC2CFEC6}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                FirstChild=[{FB514849-5F9C-4D25-B34D-D5A170D57E87}] }
+    { MenuItem       ;[{FB514849-5F9C-4D25-B34D-D5A170D57E87}] ;Name=Participant List;
+                                                                CaptionML=ENU=Participant List;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Report;
+                                                                RunObjectID=123456701;
+                                                                ParentNodeID=[{87965A03-121D-48AE-A3FE-3D3D2F13E8E3}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                DepartmentCategory=Reports and Analysis }
+    { MenuItem       ;[{65B9C80D-292F-4D27-9DE7-BA06EDBC71BA}] ;Name=Seminar Report Selection;
+                                                                CaptionML=ENU=Seminar Report Selection;
+                                                                MemberOfMenu=[{DE811AED-50EF-4C23-AD80-65F45326AE9F}];
+                                                                RunObjectType=Page;
+                                                                RunObjectID=123456723;
+                                                                ParentNodeID=[{9E3A85A3-7F96-4213-8960-1A0E66AC06EA}];
+                                                                Visible=Yes;
+                                                                NextNodeID=[{00000000-0000-0000-0000-000000000000}];
+                                                                DepartmentCategory=Administration }
+  }
+}
+

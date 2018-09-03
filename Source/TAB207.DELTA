@@ -1,0 +1,49 @@
+OBJECT Modification "Res. Journal Line"(Table 207)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=09:48:49;
+    Modified=Yes;
+    Version List=NAVW111.00.00.23019,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Res. Journal Line"(Table 207);
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-04-04 - D. E. Veloper
+                                           Chapter 4 - Lab 4
+                                             - Added new fields:
+                                               - Seminar No.
+                                               - Seminar Registration No.
+                                       END;
+                                        }
+    { Insertion         ;InsertAfter="System-Created Entry"(Field 959);
+                         ChangedElements=FieldCollection
+                         {
+                           { 123456700;;Seminar No.       ;Code20        ;TableRelation=Seminar;
+                                                                          DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Seminar No.;
+                                                                          Description=CSD1.00 }
+                           { 123456701;;Seminar Registration No.;Code20  ;TableRelation="Posted Seminar Reg. Header";
+                                                                          DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Seminar Registration No.;
+                                                                          Description=CSD1.00 }
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.23019;
+                         ModifiedValue=NAVW111.00.00.23019,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

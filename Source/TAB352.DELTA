@@ -1,0 +1,131 @@
+OBJECT Modification "Default Dimension"(Table 352)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=09:52:10;
+    Modified=Yes;
+    Version List=NAVW111.00,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Default Dimension"(Table 352);
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-08-01 - D. E. Veloper
+                                           Chapter 8 - Lab 1
+                                             - Integrated with the Seminar Management functionality
+                                       END;
+                                        }
+    { PropertyModification;
+                         Target="No."(Field 2);
+                         Property=TableRelation;
+                         OriginalValue=IF (Table ID=CONST(13)) Salesperson/Purchaser
+                                       ELSE IF (Table ID=CONST(15)) "G/L Account"
+                                       ELSE IF (Table ID=CONST(18)) Customer
+                                       ELSE IF (Table ID=CONST(23)) Vendor
+                                       ELSE IF (Table ID=CONST(27)) Item
+                                       ELSE IF (Table ID=CONST(152)) "Resource Group"
+                                       ELSE IF (Table ID=CONST(156)) Resource
+                                       ELSE IF (Table ID=CONST(167)) Job
+                                       ELSE IF (Table ID=CONST(270)) "Bank Account"
+                                       ELSE IF (Table ID=CONST(413)) "IC Partner"
+                                       ELSE IF (Table ID=CONST(5071)) Campaign
+                                       ELSE IF (Table ID=CONST(5200)) Employee
+                                       ELSE IF (Table ID=CONST(5600)) "Fixed Asset"
+                                       ELSE IF (Table ID=CONST(5628)) Insurance
+                                       ELSE IF (Table ID=CONST(5903)) "Service Order Type"
+                                       ELSE IF (Table ID=CONST(5904)) "Service Item Group"
+                                       ELSE IF (Table ID=CONST(5940)) "Service Item"
+                                       ELSE IF (Table ID=CONST(5714)) "Responsibility Center"
+                                       ELSE IF (Table ID=CONST(5800)) "Item Charge"
+                                       ELSE IF (Table ID=CONST(99000754)) "Work Center"
+                                       ELSE IF (Table ID=CONST(5105)) "Customer Template"
+                                       ELSE IF (Table ID=CONST(849)) "Cash Flow Manual Revenue"
+                                       ELSE IF (Table ID=CONST(850)) "Cash Flow Manual Expense";
+                         ModifiedValue=IF (Table ID=CONST(13)) Salesperson/Purchaser
+                                       ELSE IF (Table ID=CONST(15)) "G/L Account"
+                                       ELSE IF (Table ID=CONST(18)) Customer
+                                       ELSE IF (Table ID=CONST(23)) Vendor
+                                       ELSE IF (Table ID=CONST(27)) Item
+                                       ELSE IF (Table ID=CONST(152)) "Resource Group"
+                                       ELSE IF (Table ID=CONST(156)) Resource
+                                       ELSE IF (Table ID=CONST(167)) Job
+                                       ELSE IF (Table ID=CONST(270)) "Bank Account"
+                                       ELSE IF (Table ID=CONST(413)) "IC Partner"
+                                       ELSE IF (Table ID=CONST(5071)) Campaign
+                                       ELSE IF (Table ID=CONST(5200)) Employee
+                                       ELSE IF (Table ID=CONST(5600)) "Fixed Asset"
+                                       ELSE IF (Table ID=CONST(5628)) Insurance
+                                       ELSE IF (Table ID=CONST(5903)) "Service Order Type"
+                                       ELSE IF (Table ID=CONST(5904)) "Service Item Group"
+                                       ELSE IF (Table ID=CONST(5940)) "Service Item"
+                                       ELSE IF (Table ID=CONST(5714)) "Responsibility Center"
+                                       ELSE IF (Table ID=CONST(5800)) "Item Charge"
+                                       ELSE IF (Table ID=CONST(99000754)) "Work Center"
+                                       ELSE IF (Table ID=CONST(5105)) "Customer Template"
+                                       ELSE IF (Table ID=CONST(849)) "Cash Flow Manual Revenue"
+                                       ELSE IF (Table ID=CONST(850)) "Cash Flow Manual Expense"
+                                       ELSE IF (Table ID=CONST(123456700)) Seminar }
+    { PropertyInsertion ;Target="No."(Field 2);
+                         Property=Description;
+                         ModifiedValue=CSD1.00 }
+    { CodeModification  ;OriginalCode=BEGIN
+                                        CASE TableID OF
+                                          DATABASE::"G/L Account":
+                                            UpdateGLAccGlobalDimCode(GlobalDimCodeNo,AccNo,NewDimValue);
+                                        #4..34
+                                            UpdateNeutrPayGlobalDimCode(GlobalDimCodeNo,AccNo,NewDimValue);
+                                          DATABASE::"Cash Flow Manual Revenue":
+                                            UpdateNeutrRevGlobalDimCode(GlobalDimCodeNo,AccNo,NewDimValue);
+                                          ELSE
+                                            OnAfterUpdateGlobalDimCode(GlobalDimCodeNo,TableID,AccNo,NewDimValue);
+                                        END;
+                                      END;
+
+                         ModifiedCode=BEGIN
+                                        #1..37
+                                          //CSD1.00>
+                                          DATABASE::Seminar:
+                                            UpdateSeminarGlobalDimCode(GlobalDimCodeNo,"No.",NewDimValue);
+                                          //CSD1.00<
+                                        #38..40
+                                      END;
+
+                         Target=UpdateGlobalDimCode(PROCEDURE 25) }
+    { Insertion         ;InsertAfter=OnAfterUpdateGlobalDimCode(PROCEDURE 1);
+                         ChangedElements=PROCEDURECollection
+                         {
+                           PROCEDURE UpdateSeminarGlobalDimCode@2(GlobalDimCodeNo@1000 : Integer;SeminarNo@1001 : Code[20];NewDimValue@1002 : Code[20]);
+                           VAR
+                             Seminar@1003 : Record 123456700;
+                           BEGIN
+                             //CSD1.00>
+                             IF Seminar.GET(SeminarNo) THEN BEGIN
+                               CASE GlobalDimCodeNo OF
+                                 1:
+                                   Seminar."Global Dimension 1 Code" := NewDimValue;
+                                 2:
+                                   Seminar."Global Dimension 2 Code" := NewDimValue;
+                               END;
+                             END;
+                             //CSD1.00<
+                           END;
+
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00;
+                         ModifiedValue=NAVW111.00,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

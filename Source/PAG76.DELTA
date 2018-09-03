@@ -1,0 +1,57 @@
+OBJECT Modification "Resource Card"(Page 76)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=10:11:42;
+    Modified=Yes;
+    Version List=NAVW111.00.00.21836,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Resource Card"(Page 76);
+    TargetPageType=Card;
+  }
+  CHANGES
+  {
+    { Insertion         ;InsertAfter=Control 4;
+                         ChangedElements=ControlCollection
+                         {
+                           { 47  ;2   ;Field     ;
+                                       SourceExpr="Internal/External" }
+
+                         }
+                          }
+    { Insertion         ;InsertAfter=Control 18;
+                         ChangedElements=ControlCollection
+                         {
+                           { 45  ;1   ;Group     ;
+                                       CaptionML=ENU=Room;
+                                       GroupType=Group }
+
+                           { 43  ;2   ;Field     ;
+                                       SourceExpr="Maximum Participants" }
+
+                         }
+                          }
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-02-01 - D. E. Veloper
+                                           Chapter 2 - Lab 1
+                                             - Added the Internal/External field to the General FastTab
+                                             - Added the Room FastTab
+                                             - Added the Maximum Participants field to the Room FastTab
+                                       END;
+                                        }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.21836;
+                         ModifiedValue=NAVW111.00.00.21836,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,115 @@
+OBJECT Codeunit 123456705 SeminarMailManagement
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/10/13;
+    Time=01:19:11;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      SeminarSetup@1005 : Record 123456701;
+      CompanyInfo@1004 : Record 79;
+      SMTP@1003 : Codeunit 400;
+      Environment@1002 : DotNet "'mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Environment";
+      NoOfErrors@1001 : Integer;
+      ConfirmationBody@1000 : Text;
+      Text001@1008 : TextConst 'ENU=Registration Confirmation for Seminar "%1"';
+      Text002@1007 : TextConst 'ENU=Sending e-mail confirmations was not successful. The last error message was:\\%1';
+      Text003@1006 : TextConst 'ENU=All e-mail confirmations have been sent successfully.';
+
+    PROCEDURE Initialize@4();
+    VAR
+      Template@1000 : File;
+      Line@1001 : Text;
+    BEGIN
+      SeminarSetup.GET;
+      SeminarSetup.TESTFIELD("Confirmation Template File");
+
+      CompanyInfo.GET;
+      CompanyInfo.TESTFIELD(Name);
+      CompanyInfo.TESTFIELD("E-Mail");
+
+      CLEAR(SMTP);
+      NoOfErrors := 0;
+      ConfirmationBody := '';
+
+      Template.TEXTMODE(TRUE);
+      Template.WRITEMODE(FALSE);
+      Template.OPEN(SeminarSetup."Confirmation Template File");
+      WHILE Template.POS < Template.LEN DO BEGIN
+        Template.READ(Line);
+        ConfirmationBody += Line + Environment.NewLine;
+      END;
+      Template.CLOSE;
+    END;
+
+    PROCEDURE SendConfirmations@1(SemRegHeader@1000 : Record 123456710);
+    VAR
+      SemRegLine@1003 : Record 123456711;
+      Contact@1002 : Record 5050;
+    BEGIN
+      Initialize;
+
+      SemRegLine.SETRANGE("Document No.",SemRegHeader."No.");
+      IF SemRegLine.FINDSET(TRUE) THEN
+        REPEAT
+          Contact.GET(SemRegLine."Participant Contact No.");
+          Contact.TESTFIELD("E-Mail");
+          IF SendMail(
+            Contact."E-Mail",
+            STRSUBSTNO(
+              Text001,
+              SemRegHeader."Seminar Name"),
+            STRSUBSTNO(
+              ConfirmationBody,
+              Contact.Name,
+              SemRegHeader."Seminar Name",
+              SemRegHeader."Starting Date"))
+          THEN BEGIN
+            SemRegLine."Confirmation Date" := TODAY;
+            SemRegLine.MODIFY;
+          END;
+        UNTIL SemRegLine.NEXT = 0;
+
+      IF NoOfErrors > 0 THEN
+        ERROR(Text002,SMTP.GetLastSendMailErrorText);
+
+      MESSAGE(Text003);
+    END;
+
+    LOCAL PROCEDURE SendMail@3(ToEmail@1000 : Text;Subject@1001 : Text;Body@1002 : Text) : Boolean;
+    BEGIN
+      SMTP.CreateMessage(
+        CompanyInfo.Name,
+        CompanyInfo."E-Mail",
+        ToEmail,
+        Subject,
+        Body,
+        FALSE);
+
+      IF NOT SMTP.TrySend THEN BEGIN
+        NoOfErrors := NoOfErrors + 1;
+        EXIT(FALSE);
+      END ELSE
+        EXIT(TRUE);
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-10-01 - D. E. Veloper
+        Chapter 10 - Lab 1
+          - Created new codeunit
+    }
+    END.
+  }
+}
+

@@ -1,0 +1,134 @@
+OBJECT Table 123456718 Posted Seminar Reg. Header
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=23:23:10;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Posted Seminar Reg. Header;
+    LookupPageID=Page123456734;
+    DrillDownPageID=Page123456734;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;CaptionML=ENU=No. }
+    { 2   ;   ;Starting Date       ;Date          ;CaptionML=ENU=Starting Date }
+    { 3   ;   ;Seminar No.         ;Code20        ;TableRelation=Seminar;
+                                                   CaptionML=ENU=Seminar No. }
+    { 4   ;   ;Seminar Name        ;Text50        ;CaptionML=ENU=Seminar Name }
+    { 5   ;   ;Instructor Resource No.;Code20     ;TableRelation=Resource WHERE (Type=CONST(Person));
+                                                   CaptionML=ENU=Instructor Resource No. }
+    { 6   ;   ;Instructor Name     ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Resource.Name WHERE (No.=FIELD(Instructor Resource No.),
+                                                                                           Type=CONST(Person)));
+                                                   CaptionML=ENU=Instructor Name;
+                                                   Editable=No }
+    { 7   ;   ;Status              ;Option        ;CaptionML=ENU=Status;
+                                                   OptionCaptionML=ENU=Planning,Registration,Closed,Canceled;
+                                                   OptionString=Planning,Registration,Closed,Canceled }
+    { 8   ;   ;Duration            ;Decimal       ;CaptionML=ENU=Duration;
+                                                   DecimalPlaces=0:1 }
+    { 9   ;   ;Maximum Participants;Integer       ;CaptionML=ENU=Maximum Participants }
+    { 10  ;   ;Minimum Participants;Integer       ;CaptionML=ENU=Minimum Participants }
+    { 11  ;   ;Room Resource No.   ;Code20        ;TableRelation=Resource WHERE (Type=CONST(Machine));
+                                                   CaptionML=ENU=Room Resource No. }
+    { 12  ;   ;Room Name           ;Text30        ;CaptionML=ENU=Room Name }
+    { 13  ;   ;Room Address        ;Text30        ;CaptionML=ENU=Room Address }
+    { 14  ;   ;Room Address 2      ;Text30        ;CaptionML=ENU=Room Address 2 }
+    { 15  ;   ;Room Post Code      ;Code20        ;TableRelation="Post Code".Code;
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=ENU=Room Post Code }
+    { 16  ;   ;Room City           ;Text30        ;CaptionML=ENU=Room City }
+    { 17  ;   ;Room Country/Reg. Code;Code10      ;TableRelation=Country/Region;
+                                                   CaptionML=ENU=Room Country/Reg. Code }
+    { 18  ;   ;Room County         ;Text30        ;CaptionML=ENU=Room County }
+    { 19  ;   ;Seminar Price       ;Decimal       ;CaptionML=ENU=Seminar Price;
+                                                   AutoFormatType=1 }
+    { 20  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group".Code;
+                                                   CaptionML=ENU=Gen. Prod. Posting Group }
+    { 21  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group".Code;
+                                                   CaptionML=ENU=VAT Prod. Posting Group }
+    { 22  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Seminar Comment Line" WHERE (Document Type=CONST(Posted Seminar Registration),
+                                                                                                   No.=FIELD(No.)));
+                                                   CaptionML=ENU=Comment;
+                                                   Editable=No }
+    { 23  ;   ;Posting Date        ;Date          ;CaptionML=ENU=Posting Date }
+    { 24  ;   ;Document Date       ;Date          ;CaptionML=ENU=Document Date }
+    { 25  ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code".Code;
+                                                   CaptionML=ENU=Reason Code }
+    { 26  ;   ;No. Series          ;Code10        ;TableRelation="No. Series".Code;
+                                                   CaptionML=ENU=No. Series;
+                                                   Editable=No }
+    { 27  ;   ;Registration No. Series;Code10     ;TableRelation="No. Series".Code;
+                                                   CaptionML=ENU=Registration No. Series }
+    { 29  ;   ;User ID             ;Code20        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=ENU=User ID }
+    { 30  ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=ENU=Source Code }
+    { 51  ;   ;Shortcut Dimension 1 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=ENU=Shortcut Dimension 1 Code;
+                                                   CaptionClass='1,2,1' }
+    { 52  ;   ;Shortcut Dimension 2 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=ENU=Shortcut Dimension 2 Code;
+                                                   CaptionClass='1,2,2' }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   OnLookup=BEGIN
+                                                              ShowDimensions;
+                                                            END;
+
+                                                   CaptionML=ENU=Dimension Set ID;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Room Resource No.                       ;SumIndexFields=Duration }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      DimMgt@1000 : Codeunit 408;
+
+    PROCEDURE ShowDimensions@4();
+    BEGIN
+      DimMgt.ShowDimensionSet("Dimension Set ID",STRSUBSTNO('%1 %2',TABLECAPTION,"No."));
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-03 - D. E. Veloper
+        Chapter 4 - Lab 3
+          - Created new table
+
+      CSD1.00 - 2013-05-02 - D. E. Veloper
+        Chapter 5 - Lab 2
+          - Set the LookupPageID and DrillDownPageID properties
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added fields:
+            - Shortcut Dimension 1 Code
+            - Shortcut Dimension 2 Code
+            - Dimension Set ID
+    }
+    END.
+  }
+}
+

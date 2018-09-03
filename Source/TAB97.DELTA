@@ -1,0 +1,79 @@
+OBJECT Modification "Comment Line"(Table 97)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=09:47:35;
+    Modified=Yes;
+    Version List=NAVW111.00,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Comment Line"(Table 97);
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-02-02 - D. E. Veloper
+                                           Chapter 2 - Lab 2
+                                             - Added new options to the Table Name field: ,,,,,,Seminar:
+                                             - Added to tablerelation condition to No Field
+                                       END;
+                                        }
+    { PropertyModification;
+                         Target="Table Name"(Field 1);
+                         Property=OptionCaptionML;
+                         OriginalValue=ENU=G/L Account,Customer,Vendor,Item,Resource,Job,,Resource Group,Bank Account,Campaign,Fixed Asset,Insurance,Nonstock Item,IC Partner;
+                         ModifiedValue=ENU=G/L Account,Customer,Vendor,Item,Resource,Job,,Resource Group,Bank Account,Campaign,Fixed Asset,Insurance,Nonstock Item,IC Partner,,,,,,Seminar }
+    { PropertyModification;
+                         Target="Table Name"(Field 1);
+                         Property=OptionString;
+                         OriginalValue=G/L Account,Customer,Vendor,Item,Resource,Job,,Resource Group,Bank Account,Campaign,Fixed Asset,Insurance,Nonstock Item,IC Partner;
+                         ModifiedValue=G/L Account,Customer,Vendor,Item,Resource,Job,,Resource Group,Bank Account,Campaign,Fixed Asset,Insurance,Nonstock Item,IC Partner,,,,,,Seminar }
+    { PropertyInsertion ;Target="Table Name"(Field 1);
+                         Property=Description;
+                         ModifiedValue=CSD1.00 }
+    { PropertyModification;
+                         Target="No."(Field 2);
+                         Property=TableRelation;
+                         OriginalValue=IF (Table Name=CONST(G/L Account)) "G/L Account"
+                                       ELSE IF (Table Name=CONST(Customer)) Customer
+                                       ELSE IF (Table Name=CONST(Vendor)) Vendor
+                                       ELSE IF (Table Name=CONST(Item)) Item
+                                       ELSE IF (Table Name=CONST(Resource)) Resource
+                                       ELSE IF (Table Name=CONST(Job)) Job
+                                       ELSE IF (Table Name=CONST(Resource Group)) "Resource Group"
+                                       ELSE IF (Table Name=CONST(Bank Account)) "Bank Account"
+                                       ELSE IF (Table Name=CONST(Campaign)) Campaign
+                                       ELSE IF (Table Name=CONST(Fixed Asset)) "Fixed Asset"
+                                       ELSE IF (Table Name=CONST(Insurance)) Insurance
+                                       ELSE IF (Table Name=CONST(IC Partner)) "IC Partner";
+                         ModifiedValue=IF (Table Name=CONST(G/L Account)) "G/L Account"
+                                       ELSE IF (Table Name=CONST(Customer)) Customer
+                                       ELSE IF (Table Name=CONST(Vendor)) Vendor
+                                       ELSE IF (Table Name=CONST(Item)) Item
+                                       ELSE IF (Table Name=CONST(Resource)) Resource
+                                       ELSE IF (Table Name=CONST(Job)) Job
+                                       ELSE IF (Table Name=CONST(Resource Group)) "Resource Group"
+                                       ELSE IF (Table Name=CONST(Bank Account)) "Bank Account"
+                                       ELSE IF (Table Name=CONST(Campaign)) Campaign
+                                       ELSE IF (Table Name=CONST(Fixed Asset)) "Fixed Asset"
+                                       ELSE IF (Table Name=CONST(Insurance)) Insurance
+                                       ELSE IF (Table Name=CONST(IC Partner)) "IC Partner"
+                                       ELSE IF (Table Name=CONST(Seminar)) Seminar }
+    { PropertyInsertion ;Target="No."(Field 2);
+                         Property=Description;
+                         ModifiedValue=CSD1.00 }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00;
+                         ModifiedValue=NAVW111.00,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

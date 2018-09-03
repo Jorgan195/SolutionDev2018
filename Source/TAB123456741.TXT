@@ -1,0 +1,43 @@
+OBJECT Table 123456741 My Seminar
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/09/13;
+    Time=00:51:16;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=My Seminar;
+  }
+  FIELDS
+  {
+    { 1   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=ENU=User ID }
+    { 2   ;   ;Seminar No.         ;Code20        ;TableRelation=Seminar;
+                                                   CaptionML=ENU=Seminar No.;
+                                                   NotBlank=Yes }
+  }
+  KEYS
+  {
+    {    ;User ID,Seminar No.                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-09-01 - D. E. Veloper
+        Chapter 9 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

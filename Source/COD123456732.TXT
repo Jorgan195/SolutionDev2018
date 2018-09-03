@@ -1,0 +1,119 @@
+OBJECT Codeunit 123456732 Seminar Jnl.-Post Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=23:40:12;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    TableNo=123456731;
+    OnRun=BEGIN
+            RunWithCheck(Rec);
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      SeminarJnlLine@1000 : Record 123456731;
+      SeminarLedgerEntry@1001 : Record 123456732;
+      SeminarRegister@1002 : Record 123456733;
+      SeminarJnlCheckLine@1003 : Codeunit 123456731;
+      NextEntryNo@1004 : Integer;
+
+    PROCEDURE RunWithCheck@2(VAR SeminarJnlLine2@1000 : Record 123456731);
+    BEGIN
+      SeminarJnlLine.COPY(SeminarJnlLine2);
+      Code;
+      SeminarJnlLine2 := SeminarJnlLine;
+    END;
+
+    PROCEDURE Code@3();
+    BEGIN
+      WITH SeminarJnlLine DO BEGIN
+        IF EmptyLine THEN
+          EXIT;
+
+        SeminarJnlCheckLine.RunCheck(SeminarJnlLine);
+
+        IF NextEntryNo = 0 THEN BEGIN
+          SeminarLedgerEntry.LOCKTABLE;
+          IF SeminarLedgerEntry.FINDLAST THEN
+            NextEntryNo := SeminarLedgerEntry."Entry No.";
+          NextEntryNo := NextEntryNo + 1;
+        END;
+
+        IF "Document Date" = 0D THEN
+          "Document Date" := "Posting Date";
+
+        IF SeminarRegister."No." = 0 THEN BEGIN
+          SeminarRegister.LOCKTABLE;
+          IF (NOT SeminarRegister.FINDLAST) OR (SeminarRegister."To Entry No." <> 0) THEN BEGIN
+            SeminarRegister.INIT;
+            SeminarRegister."No." := SeminarRegister."No." + 1;
+            SeminarRegister."From Entry No." := NextEntryNo;
+            SeminarRegister."To Entry No." := NextEntryNo;
+            SeminarRegister."Creation Date" := TODAY;
+            SeminarRegister."Source Code" := "Source Code";
+            SeminarRegister."Journal Batch Name" := "Journal Batch Name";
+            SeminarRegister."User ID" := USERID;
+            SeminarRegister.INSERT;
+          END;
+        END;
+        SeminarRegister."To Entry No." := NextEntryNo;
+        SeminarRegister.MODIFY;
+
+        SeminarLedgerEntry.INIT;
+        SeminarLedgerEntry."Seminar No." := "Seminar No.";
+        SeminarLedgerEntry."Posting Date" := "Posting Date";
+        SeminarLedgerEntry."Document Date" := "Document Date";
+        SeminarLedgerEntry."Entry Type" := "Entry Type";
+        SeminarLedgerEntry."Document No." := "Document No.";
+        SeminarLedgerEntry.Description := Description;
+        SeminarLedgerEntry."Bill-to Customer No." := "Bill-to Customer No.";
+        SeminarLedgerEntry."Charge Type" := "Charge Type";
+        SeminarLedgerEntry.Type := Type;
+        SeminarLedgerEntry.Quantity := Quantity;
+        SeminarLedgerEntry."Unit Price" := "Unit Price";
+        SeminarLedgerEntry."Total Price" := "Total Price";
+        SeminarLedgerEntry."Participant Contact No." := "Participant Contact No.";
+        SeminarLedgerEntry."Participant Name" := "Participant Name";
+        SeminarLedgerEntry.Chargeable := Chargeable;
+        SeminarLedgerEntry."Room Resource No." := "Room Resource No.";
+        SeminarLedgerEntry."Instructor Resource No." := "Instructor Resource No.";
+        SeminarLedgerEntry."Starting Date" := "Starting Date";
+        SeminarLedgerEntry."Seminar Registration No." := "Seminar Registration No.";
+        SeminarLedgerEntry."Res. Ledger Entry No." := "Res. Ledger Entry No.";
+        SeminarLedgerEntry."Source Type" := "Source Type";
+        SeminarLedgerEntry."Source No." := "Source No.";
+        SeminarLedgerEntry."Journal Batch Name" := "Journal Batch Name";
+        SeminarLedgerEntry."Source Code" := "Source Code";
+        SeminarLedgerEntry."Reason Code" := "Reason Code";
+        SeminarLedgerEntry."No. Series" := "Posting No. Series";
+        SeminarLedgerEntry."User ID" := USERID;
+        SeminarLedgerEntry."Entry No." := NextEntryNo;
+        SeminarLedgerEntry."Global Dimension 1 Code" := "Shortcut Dimension 1 Code";
+        SeminarLedgerEntry."Global Dimension 2 Code" := "Shortcut Dimension 2 Code";
+        SeminarLedgerEntry."Dimension Set ID" := "Dimension Set ID";
+        SeminarLedgerEntry.INSERT;
+        NextEntryNo := NextEntryNo + 1;
+      END;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-02 - D. E. Veloper
+        Chapter 4 - Lab 2
+          - Created new codeunit
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Integrated Dimensions functionality
+    }
+    END.
+  }
+}
+

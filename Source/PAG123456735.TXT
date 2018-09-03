@@ -1,0 +1,95 @@
+OBJECT Page 123456735 Posted Seminar Reg. Subform
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=23:26:10;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Lines;
+    SourceTable=Table123456719;
+    DelayedInsert=Yes;
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+    ActionList=ACTIONS
+    {
+      { 18      ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 15      ;1   ;ActionGroup;
+                      CaptionML=ENU=&Line }
+      { 16      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=ENU=Dimensions;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Bill-to Customer No." }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr="Participant Contact No." }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr="Participant Name" }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=Participated }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Registration Date" }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr="Confirmation Date" }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="To Invoice" }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr=Registered }
+
+    { 11  ;2   ;Field     ;
+                SourceExpr="Seminar Price" }
+
+    { 12  ;2   ;Field     ;
+                SourceExpr="Line Discount %" }
+
+    { 13  ;2   ;Field     ;
+                SourceExpr="Line Discount Amount" }
+
+    { 14  ;2   ;Field     ;
+                SourceExpr=Amount }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-03 - D. E. Veloper
+        Chapter 4 - Lab 3
+          - Created new page
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added the Dimensions action
+    }
+    END.
+  }
+}
+

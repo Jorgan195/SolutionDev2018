@@ -1,0 +1,55 @@
+OBJECT Codeunit 123456710 Seminar Web Services Ext.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/11/13;
+    Time=01:30:04;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      Text001@1000 : TextConst 'HRV=You cannot register for this seminar. Maximum number of participants have already been registered.';
+
+    PROCEDURE RegisterParticipant@1(SemRegHeader@1000 : Record 123456710;CustNo@1001 : Code[20];ContNo@1002 : Code[20]);
+    VAR
+      SemRegLine@1003 : Record 123456711;
+      LineNo@1004 : Integer;
+    BEGIN
+      LineNo := 10000;
+      SemRegLine.LOCKTABLE;
+      SemRegLine.SETRANGE("Document No.",SemRegHeader."No.");
+      IF SemRegLine.FINDLAST THEN
+        LineNo := LineNo + SemRegLine."Line No.";
+
+      SemRegHeader.CALCFIELDS("Registered Participants");
+      IF SemRegHeader."Registered Participants" >= SemRegHeader."Maximum Participants" THEN
+        ERROR(Text001);
+
+      SemRegLine.RESET;
+      SemRegLine.INIT;
+      SemRegLine.VALIDATE("Document No.",SemRegHeader."No.");
+      SemRegLine."Line No." := LineNo;
+      SemRegLine.VALIDATE("Bill-to Customer No.",CustNo);
+      SemRegLine.VALIDATE("Participant Contact No.",ContNo);
+      SemRegLine."Registration Date" := TODAY;
+      SemRegLine.INSERT(TRUE);
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-11-01 - D. E. Veloper
+        Chapter 11 - Lab 1
+          - Created new codeunit
+    }
+    END.
+  }
+}
+

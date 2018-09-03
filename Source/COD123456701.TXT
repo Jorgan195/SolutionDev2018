@@ -1,0 +1,44 @@
+OBJECT Codeunit 123456701 Seminar-Post (Yes/No)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=05/04/13;
+    Time=13:39:57;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    TableNo=123456710;
+    OnRun=BEGIN
+            SeminarRegHeader.COPY(Rec);
+            Code;
+            Rec := SeminarRegHeader;
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      SeminarRegHeader@1000000001 : Record 123456710;
+      SeminarPost@1000000000 : Codeunit 123456700;
+      Text001@1000000002 : TextConst 'ENU=Do you want to post the Registration?';
+
+    LOCAL PROCEDURE Code@2();
+    BEGIN
+      IF NOT CONFIRM(Text001,FALSE) THEN
+        EXIT;
+      SeminarPost.RUN(SeminarRegHeader);
+      COMMIT;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-05 - D. E. Veloper
+        Chapter 4 - Lab 5
+          - Created new codeunit
+    }
+    END.
+  }
+}
+

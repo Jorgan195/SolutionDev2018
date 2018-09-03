@@ -1,0 +1,56 @@
+OBJECT Page 123456706 Seminar Comment Sheet
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/03/13;
+    Time=19:56:25;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Comment Sheet;
+    MultipleNewLines=Yes;
+    LinksAllowed=No;
+    SourceTable=Table123456704;
+    DelayedInsert=Yes;
+    DataCaptionFields=No.;
+    PageType=List;
+    AutoSplitKey=Yes;
+    OnNewRecord=BEGIN
+                  SetUpNewLine;
+                END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                SourceExpr=Date }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Comment }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=Code;
+                Visible=FALSE }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-01 - D. E. Veloper
+        Chapter 3 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

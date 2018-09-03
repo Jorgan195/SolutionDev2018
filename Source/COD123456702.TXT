@@ -1,0 +1,33 @@
+OBJECT Codeunit 123456702 Seminar-Printed
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/06/13;
+    Time=18:03:23;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    TableNo=123456710;
+    OnRun=BEGIN
+            FIND;
+            "No. Printed" := "No. Printed" + 1;
+            MODIFY;
+            COMMIT;
+          END;
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-06-01 - D. E. Veloper
+        Chapter 6 - Lab 1
+          - Created new codeunit
+    }
+    END.
+  }
+}
+

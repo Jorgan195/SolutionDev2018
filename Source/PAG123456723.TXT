@@ -1,0 +1,98 @@
+OBJECT Page 123456723 Seminar Report Selection
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/06/13;
+    Time=19:12:35;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Report Selection;
+    SaveValues=Yes;
+    SourceTable=Table123456705;
+    PageType=Worksheet;
+    OnOpenPage=BEGIN
+                 SetUsageFilter;
+               END;
+
+    OnNewRecord=BEGIN
+                  NewRecord;
+                END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 11  ;1   ;Field     ;
+                CaptionML=ENU=Usage;
+                OptionCaptionML=ENU=Registration;
+                SourceExpr=ReportUsage2;
+                OnValidate=BEGIN
+                             SetUsageFilter;
+                             ReportUsage2OnAfterValidate;
+                           END;
+                            }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                SourceExpr=Sequence }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="Report ID";
+                LookupPageID=Objects }
+
+    { 4   ;2   ;Field     ;
+                DrillDown=No;
+                SourceExpr="Report Name";
+                LookupPageID=Objects }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      ReportUsage2@1000 : 'Registration';
+
+    LOCAL PROCEDURE SetUsageFilter@1();
+    BEGIN
+      FILTERGROUP(2);
+      CASE ReportUsage2 OF
+        ReportUsage2::Registration:
+          SETRANGE(Usage,Usage::Registration);
+      END;
+      FILTERGROUP(0);
+    END;
+
+    LOCAL PROCEDURE ReportUsage2OnAfterValidate@19038799();
+    BEGIN
+      CurrPage.UPDATE;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-06-01 - D. E. Veloper
+        Chapter 6 - Lab 1
+          - Created new page
+    }
+    END.
+  }
+}
+

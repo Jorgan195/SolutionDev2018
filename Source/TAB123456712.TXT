@@ -1,0 +1,144 @@
+OBJECT Table 123456712 Seminar Charge
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/03/13;
+    Time=13:11:52;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               SeminarRegistrationHeader.GET("Document No.");
+             END;
+
+    OnDelete=BEGIN
+               TESTFIELD(Registered,FALSE);
+             END;
+
+    CaptionML=ENU=Seminar Charge;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Document No.        ;Code20        ;TableRelation="Seminar Registration Header";
+                                                   CaptionML=ENU=Document No.;
+                                                   NotBlank=Yes }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=ENU=Line No. }
+    { 3   ;   ;Type                ;Option        ;OnValidate=BEGIN
+                                                                IF Type <> xRec.Type THEN BEGIN
+                                                                  Description := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=ENU=Type;
+                                                   OptionCaptionML=ENU=Resource,G/L Account;
+                                                   OptionString=Resource,G/L Account }
+    { 4   ;   ;No.                 ;Code20        ;TableRelation=IF (Type=CONST(Resource)) Resource.No.
+                                                                 ELSE IF (Type=CONST(G/L Account)) "G/L Account".No.;
+                                                   OnValidate=BEGIN
+                                                                CASE Type OF
+                                                                  Type::Resource:
+                                                                    BEGIN
+                                                                      Resource.GET("No.");
+                                                                      Resource.TESTFIELD(Blocked,FALSE);
+                                                                      Resource.TESTFIELD("Gen. Prod. Posting Group");
+                                                                      Description := Resource.Name;
+                                                                      "Gen. Prod. Posting Group" := Resource."Gen. Prod. Posting Group";
+                                                                      "VAT Prod. Posting Group" := Resource."VAT Prod. Posting Group";
+                                                                      "Unit of Measure Code" := Resource."Base Unit of Measure";
+                                                                      "Unit Price" := Resource."Unit Price";
+                                                                    END;
+                                                                  Type::"G/L Account":
+                                                                    BEGIN
+                                                                      GLAccount.GET("No.");
+                                                                      GLAccount.CheckGLAcc();
+                                                                      GLAccount.TESTFIELD("Direct Posting",TRUE);
+                                                                      Description := GLAccount.Name;
+                                                                      "Gen. Prod. Posting Group" := GLAccount."Gen. Bus. Posting Group";
+                                                                      "VAT Prod. Posting Group" := GLAccount."VAT Bus. Posting Group";
+                                                                    END;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=ENU=No. }
+    { 5   ;   ;Description         ;Text50        ;CaptionML=ENU=Description }
+    { 6   ;   ;Quantity            ;Decimal       ;OnValidate=BEGIN
+                                                                "Total Price" := ROUND("Unit Price" * Quantity,0.01);
+                                                              END;
+
+                                                   CaptionML=ENU=Quantity;
+                                                   DecimalPlaces=0:5 }
+    { 7   ;   ;Unit Price          ;Decimal       ;OnValidate=BEGIN
+                                                                "Total Price" := ROUND("Unit Price" * Quantity,0.01);
+                                                              END;
+
+                                                   CaptionML=ENU=Unit Price;
+                                                   MinValue=0;
+                                                   AutoFormatType=2 }
+    { 8   ;   ;Total Price         ;Decimal       ;CaptionML=ENU=Total Price;
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 9   ;   ;To Invoice          ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=ENU=To Invoice }
+    { 10  ;   ;Bill-to Customer No.;Code20        ;TableRelation=Customer.No.;
+                                                   CaptionML=ENU=Bill-to Customer No. }
+    { 11  ;   ;Unit of Measure Code;Code10        ;TableRelation=IF (Type=CONST(Resource)) "Resource Unit of Measure".Code WHERE (Resource No.=FIELD(No.))
+                                                                 ELSE "Unit of Measure".Code;
+                                                   OnValidate=BEGIN
+                                                                CASE Type OF
+                                                                  Type::Resource:
+                                                                    BEGIN
+                                                                      Resource.GET("No.");
+                                                                      IF "Unit of Measure Code" = '' THEN BEGIN
+                                                                        "Unit of Measure Code" := Resource."Base Unit of Measure";
+                                                                      END;
+                                                                      ResourceUofM.GET("No.","Unit of Measure Code");
+                                                                      "Qty. per Unit of Measure" := ResourceUofM."Qty. per Unit of Measure";
+                                                                      "Total Price" := ROUND(Resource."Unit Price" * "Qty. per Unit of Measure");
+                                                                    END;
+                                                                  Type::"G/L Account":
+                                                                    BEGIN
+                                                                      "Qty. per Unit of Measure" := 1;
+                                                                    END;
+                                                                END;
+                                                                IF CurrFieldNo = FIELDNO("Unit of Measure Code") THEN BEGIN
+                                                                  VALIDATE("Unit Price");
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=ENU=Unit of Measure Code }
+    { 12  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group".Code;
+                                                   CaptionML=ENU=Gen. Prod. Posting Group }
+    { 13  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group".Code;
+                                                   CaptionML=ENU=VAT Prod. Posting Group }
+    { 14  ;   ;Qty. per Unit of Measure;Decimal   ;CaptionML=ENU=Qty. per Unit of Measure }
+    { 15  ;   ;Registered          ;Boolean       ;CaptionML=ENU=Registered;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Document No.,Line No.                   ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      GLAccount@1000000003 : Record 15;
+      Job@1000000001 : Record 167;
+      Resource@1000000002 : Record 156;
+      ResourceUofM@1000000004 : Record 205;
+      SeminarRegistrationHeader@1000000000 : Record 123456710;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-01 - D. E. Veloper
+        Chapter 3 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

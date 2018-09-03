@@ -1,0 +1,60 @@
+OBJECT Table 123456704 Seminar Comment Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/03/13;
+    Time=12:34:49;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Comment Line;
+    LookupPageID=Page123456707;
+    DrillDownPageID=Page123456707;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Document Type       ;Option        ;CaptionML=ENU=Document Type;
+                                                   OptionCaptionML=ENU=Seminar Registration,Posted Seminar Registration;
+                                                   OptionString=Seminar Registration,Posted Seminar Registration }
+    { 2   ;   ;No.                 ;Code20        ;CaptionML=ENU=No. }
+    { 3   ;   ;Line No.            ;Integer       ;CaptionML=ENU=Line No. }
+    { 4   ;   ;Date                ;Date          ;CaptionML=ENU=Date }
+    { 5   ;   ;Code                ;Code10        ;CaptionML=ENU=Code }
+    { 6   ;   ;Comment             ;Text80        ;CaptionML=ENU=Comment }
+    { 7   ;   ;Document Line No.   ;Integer       ;CaptionML=ENU=Document Line No. }
+  }
+  KEYS
+  {
+    {    ;Document Type,No.,Document Line No.,Line No.;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SetUpNewLine@1();
+    VAR
+      SeminarCommentLine@1000 : Record 44;
+    BEGIN
+      SeminarCommentLine.SETRANGE("Document Type","Document Type");
+      SeminarCommentLine.SETRANGE("No.","No.");
+      SeminarCommentLine.SETRANGE("Document Line No.","Document Line No.");
+      SeminarCommentLine.SETRANGE(Date,WORKDATE);
+      IF NOT SeminarCommentLine.FIND('-') THEN
+        Date := WORKDATE;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-01 - D. E. Veloper
+        Chapter 3 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

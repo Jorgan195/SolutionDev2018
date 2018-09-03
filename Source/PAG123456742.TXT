@@ -1,0 +1,97 @@
+OBJECT Page 123456742 My Seminars
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/09/13;
+    Time=00:52:13;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=My Seminars;
+    SourceTable=Table123456741;
+    PageType=ListPart;
+    OnOpenPage=BEGIN
+                 SETRANGE("User ID",USERID);
+               END;
+
+    OnAfterGetRecord=BEGIN
+                       GetSeminar;
+                     END;
+
+    OnNewRecord=BEGIN
+                  CLEAR(Seminar);
+                END;
+
+    ActionList=ACTIONS
+    {
+      { 7       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;Action    ;
+                      ShortCutKey=Return;
+                      CaptionML=ENU=Open;
+                      Image=Edit;
+                      OnAction=BEGIN
+                                 OpenSeminarCard;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Seminar No.";
+                OnValidate=BEGIN
+                             GetSeminar;
+                           END;
+                            }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=ENU=Name;
+                SourceExpr=Seminar.Name }
+
+    { 5   ;2   ;Field     ;
+                CaptionML=ENU=Duration;
+                SourceExpr=Seminar."Seminar Duration" }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=ENU=Price;
+                SourceExpr=Seminar."Seminar Price" }
+
+  }
+  CODE
+  {
+    VAR
+      Seminar@1000 : Record 123456700;
+
+    PROCEDURE GetSeminar@1();
+    BEGIN
+      CLEAR(Seminar);
+
+      IF Seminar.GET("Seminar No.") THEN;
+    END;
+
+    PROCEDURE OpenSeminarCard@2();
+    BEGIN
+      IF Seminar.GET("Seminar No.") THEN
+        PAGE.RUN(PAGE::"Seminar Card",Seminar);
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-09-01 - D. E. Veloper
+        Chapter 9 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

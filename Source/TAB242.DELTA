@@ -1,0 +1,44 @@
+OBJECT Modification "Source Code Setup"(Table 242)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=09:49:11;
+    Modified=Yes;
+    Version List=NAVW111.00,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Source Code Setup"(Table 242);
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-04-01 - D. E. Veloper
+                                           Chapter 4 - Lab 1
+                                             - Added new fields:
+                                               - Seminar
+                                       END;
+                                        }
+    { Insertion         ;InsertAfter="Compress Whse. Entries"(Field 7307);
+                         ChangedElements=FieldCollection
+                         {
+                           { 123456700;;Seminar           ;Code10        ;TableRelation="Source Code";
+                                                                          DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Seminar;
+                                                                          Description=CSD1.00 }
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00;
+                         ModifiedValue=NAVW111.00,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

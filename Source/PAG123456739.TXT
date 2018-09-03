@@ -1,0 +1,67 @@
+OBJECT Page 123456739 Posted Seminar Charges
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/04/13;
+    Time=15:22:36;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=ENU=Seminar Charges;
+    SourceTable=Table123456721;
+    PageType=List;
+    AutoSplitKey=Yes;
+  }
+  CONTROLS
+  {
+    { 11  ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 10  ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="No." }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr=Description }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=Quantity }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Unit of Measure Code" }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr="Bill-to Customer No." }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr="Gen. Prod. Posting Group" }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Unit Price" }
+
+    { 2   ;2   ;Field     ;
+                SourceExpr="Total Price" }
+
+    { 1   ;2   ;Field     ;
+                SourceExpr="To Invoice" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-03 - D. E. Veloper
+        Chapter 4 - Lab 3
+          - Created new page
+    }
+    END.
+  }
+}
+

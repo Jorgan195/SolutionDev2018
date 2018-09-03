@@ -1,0 +1,73 @@
+OBJECT Modification "Res. Ledger Entry"(Table 203)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=09:53:42;
+    Modified=Yes;
+    Version List=NAVW111.00.00.20783,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Res. Ledger Entry"(Table 203);
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-04-04 - D. E. Veloper
+                                           Chapter 4 - Lab 4
+                                             - Added new fields:
+                                               - Seminar No.
+                                               - Seminar Registration No.
+                                             - Added code do assign the Seminar No. and Seminar Registration No. fields from the Journal to the Ledger
+                                       END;
+                                        }
+    { Insertion         ;InsertAfter="Dimension Set ID"(Field 480);
+                         ChangedElements=FieldCollection
+                         {
+                           { 123456700;;Seminar No.       ;Code20        ;TableRelation=Seminar;
+                                                                          DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Seminar No.;
+                                                                          Description=CSD1.00 }
+                           { 123456701;;Seminar Registration No.;Code20  ;TableRelation="Posted Seminar Reg. Header";
+                                                                          DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Seminar Registration No.;
+                                                                          Description=CSD1.00 }
+                         }
+                          }
+    { CodeModification  ;OriginalCode=BEGIN
+                                        "Entry Type" := ResJnlLine."Entry Type";
+                                        "Document No." := ResJnlLine."Document No.";
+                                        "External Document No." := ResJnlLine."External Document No.";
+                                        #4..29
+                                        "Source Type" := ResJnlLine."Source Type";
+                                        "Source No." := ResJnlLine."Source No.";
+                                        "Qty. per Unit of Measure" := ResJnlLine."Qty. per Unit of Measure";
+
+                                        OnAfterCopyFromResJnlLine(Rec,ResJnlLine);
+                                      END;
+
+                         ModifiedCode=BEGIN
+                                        #1..32
+                                        //CSD1.00>
+                                        "Seminar No." := ResJnlLine."Seminar No.";
+                                        "Seminar Registration No." := ResJnlLine."Seminar Registration No.";
+                                        //CSD1.00<
+
+                                        OnAfterCopyFromResJnlLine(Rec,ResJnlLine);
+                                      END;
+
+                         Target=CopyFromResJnlLine(PROCEDURE 2) }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.20783;
+                         ModifiedValue=NAVW111.00.00.20783,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

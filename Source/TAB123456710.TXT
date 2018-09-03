@@ -1,0 +1,473 @@
+OBJECT Table 123456710 Seminar Registration Header
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/11/13;
+    Time=15:28:27;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               IF "No." = '' THEN BEGIN
+                 SeminarSetup.GET;
+                 SeminarSetup.TESTFIELD("Seminar Registration Nos.");
+                 NoSeriesMgt.InitSeries(SeminarSetup."Seminar Registration Nos.",xRec."No. Series",0D,"No.","No. Series");
+               END;
+               InitRecord;
+
+               IF GETFILTER("Seminar No.") <> '' THEN
+                 IF GETRANGEMIN("Seminar No.") = GETRANGEMAX("Seminar No.") THEN
+                   VALIDATE("Seminar No.",GETRANGEMIN("Seminar No."));
+             END;
+
+    OnDelete=BEGIN
+               TESTFIELD(Status,Status::Canceled);
+
+               SeminarRegLine.RESET;
+               SeminarRegLine.SETRANGE("Document No.","No.");
+               SeminarRegLine.SETRANGE(Registered,TRUE);
+               IF SeminarRegLine.FIND('-') THEN
+                 ERROR(
+                   Text001,
+                   SeminarRegLine.TABLECAPTION,
+                   SeminarRegLine.FIELDCAPTION(Registered),
+                   TRUE);
+               SeminarRegLine.SETRANGE(Registered);
+               SeminarRegLine.DELETEALL(TRUE);
+
+               SeminarCharge.RESET;
+               SeminarCharge.SETRANGE("Document No.","No.");
+               IF NOT SeminarCharge.ISEMPTY THEN
+                 ERROR(Text006,SeminarCharge.TABLECAPTION);
+
+               SeminarCommentLine.RESET;
+               SeminarCommentLine.SETRANGE("Document Type",SeminarCommentLine."Document Type"::"Seminar Registration");
+               SeminarCommentLine.SETRANGE("No.","No.");
+               SeminarCommentLine.DELETEALL;
+             END;
+
+    CaptionML=ENU=Seminar Registration Header;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;OnValidate=BEGIN
+                                                                IF "No." <> xRec."No." THEN BEGIN
+                                                                  SeminarSetup.GET;
+                                                                  NoSeriesMgt.TestManual(SeminarSetup."Seminar Registration Nos.");
+                                                                  "No. Series" := '';
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=ENU=No. }
+    { 2   ;   ;Starting Date       ;Date          ;OnValidate=BEGIN
+                                                                IF "Starting Date" <> xRec."Starting Date" THEN
+                                                                  TESTFIELD(Status,Status::Planning);
+                                                              END;
+
+                                                   CaptionML=ENU=Starting Date }
+    { 3   ;   ;Seminar No.         ;Code20        ;TableRelation=Seminar;
+                                                   OnValidate=BEGIN
+                                                                IF "Seminar No." <> xRec."Seminar No." THEN BEGIN
+                                                                  SeminarRegLine.RESET;
+                                                                  SeminarRegLine.SETRANGE("Document No.","No.");
+                                                                  SeminarRegLine.SETRANGE(Registered,TRUE);
+                                                                  IF NOT SeminarRegLine.ISEMPTY THEN
+                                                                    ERROR(
+                                                                      Text002,
+                                                                      FIELDCAPTION("Seminar No."),
+                                                                      SeminarRegLine.TABLECAPTION,
+                                                                      SeminarRegLine.FIELDCAPTION(Registered),
+                                                                      TRUE);
+
+                                                                  Seminar.GET("Seminar No.");
+                                                                  Seminar.TESTFIELD(Blocked,FALSE);
+                                                                  Seminar.TESTFIELD("Gen. Prod. Posting Group");
+                                                                  Seminar.TESTFIELD("VAT Prod. Posting Group");
+                                                                  "Seminar Name" := Seminar.Name;
+                                                                  Duration := Seminar."Seminar Duration";
+                                                                  "Seminar Price" := Seminar."Seminar Price";
+                                                                  "Gen. Prod. Posting Group" := Seminar."Gen. Prod. Posting Group";
+                                                                  "VAT Prod. Posting Group" := Seminar."VAT Prod. Posting Group";
+                                                                  "Minimum Participants" := Seminar."Minimum Participants";
+                                                                  "Maximum Participants" := Seminar."Maximum Participants";
+                                                                END;
+
+                                                                CreateDim(
+                                                                  DATABASE::Seminar,"Seminar No.",
+                                                                  DATABASE::Resource,"Instructor Resource No.",
+                                                                  DATABASE::Resource,"Room Resource No.");
+                                                              END;
+
+                                                   CaptionML=ENU=Seminar No. }
+    { 4   ;   ;Seminar Name        ;Text50        ;CaptionML=ENU=Seminar Name }
+    { 5   ;   ;Instructor Resource No.;Code20     ;TableRelation=Resource WHERE (Type=CONST(Person));
+                                                   OnValidate=BEGIN
+                                                                CALCFIELDS("Instructor Name");
+
+                                                                CreateDim(
+                                                                  DATABASE::Seminar,"Seminar No.",
+                                                                  DATABASE::Resource,"Instructor Resource No.",
+                                                                  DATABASE::Resource,"Room Resource No.");
+                                                              END;
+
+                                                   CaptionML=ENU=Instructor Resource No. }
+    { 6   ;   ;Instructor Name     ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Resource.Name WHERE (No.=FIELD(Instructor Resource No.),
+                                                                                           Type=CONST(Person)));
+                                                   CaptionML=ENU=Instructor Name;
+                                                   Editable=No }
+    { 7   ;   ;Status              ;Option        ;CaptionML=ENU=Status;
+                                                   OptionCaptionML=ENU=Planning,Registration,Closed,Canceled;
+                                                   OptionString=Planning,Registration,Closed,Canceled }
+    { 8   ;   ;Duration            ;Decimal       ;CaptionML=ENU=Duration;
+                                                   DecimalPlaces=0:1 }
+    { 9   ;   ;Maximum Participants;Integer       ;CaptionML=ENU=Maximum Participants }
+    { 10  ;   ;Minimum Participants;Integer       ;CaptionML=ENU=Minimum Participants }
+    { 11  ;   ;Room Resource No.   ;Code20        ;TableRelation=Resource WHERE (Type=CONST(Machine));
+                                                   OnValidate=BEGIN
+                                                                IF "Room Resource No." = '' THEN BEGIN
+                                                                  "Room Name" := '';
+                                                                  "Room Address" := '';
+                                                                  "Room Address 2" := '';
+                                                                  "Room Post Code" := '';
+                                                                  "Room City" := '';
+                                                                  "Room County" := '';
+                                                                  "Room Country/Reg. Code" := '';
+                                                                END ELSE BEGIN
+                                                                  SeminarRoom.GET("Room Resource No.");
+                                                                  "Room Name" := SeminarRoom.Name;
+                                                                  "Room Address" := SeminarRoom.Address;
+                                                                  "Room Address 2" := SeminarRoom."Address 2";
+                                                                  "Room Post Code" := SeminarRoom."Post Code";
+                                                                  "Room City" := SeminarRoom.City;
+                                                                  "Room County" := SeminarRoom.County;
+                                                                  "Room Country/Reg. Code" := SeminarRoom."Country/Region Code";
+
+                                                                  IF (CurrFieldNo <> 0) THEN BEGIN
+                                                                    IF (SeminarRoom."Maximum Participants" <> 0) AND
+                                                                       (SeminarRoom."Maximum Participants" < "Maximum Participants")
+                                                                    THEN BEGIN
+                                                                      IF CONFIRM(Text004,TRUE,
+                                                                           "Maximum Participants",
+                                                                           SeminarRoom."Maximum Participants",
+                                                                           FIELDCAPTION("Maximum Participants"),
+                                                                           "Maximum Participants",
+                                                                           SeminarRoom."Maximum Participants")
+                                                                      THEN
+                                                                        "Maximum Participants" := SeminarRoom."Maximum Participants";
+                                                                    END;
+                                                                  END;
+                                                                END;
+
+                                                                CreateDim(
+                                                                  DATABASE::Seminar,"Seminar No.",
+                                                                  DATABASE::Resource,"Instructor Resource No.",
+                                                                  DATABASE::Resource,"Room Resource No.");
+                                                              END;
+
+                                                   CaptionML=ENU=Room Resource No. }
+    { 12  ;   ;Room Name           ;Text30        ;CaptionML=ENU=Room Name }
+    { 13  ;   ;Room Address        ;Text30        ;CaptionML=ENU=Room Address }
+    { 14  ;   ;Room Address 2      ;Text30        ;CaptionML=ENU=Room Address 2 }
+    { 15  ;   ;Room Post Code      ;Code20        ;TableRelation="Post Code".Code;
+                                                   OnValidate=BEGIN
+                                                                PostCode.ValidatePostCode("Room City","Room Post Code","Room County","Room Country/Reg. Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=ENU=Room Post Code }
+    { 16  ;   ;Room City           ;Text30        ;OnValidate=BEGIN
+                                                                PostCode.ValidateCity("Room City","Room Post Code","Room County","Room Country/Reg. Code",(CurrFieldNo <> 0) AND GUIALLOWED);
+                                                              END;
+
+                                                   CaptionML=ENU=Room City }
+    { 17  ;   ;Room Country/Reg. Code;Code10      ;TableRelation=Country/Region;
+                                                   CaptionML=ENU=Room Country/Reg. Code }
+    { 18  ;   ;Room County         ;Text30        ;CaptionML=ENU=Room County }
+    { 19  ;   ;Seminar Price       ;Decimal       ;OnValidate=BEGIN
+                                                                IF ("Seminar Price" <> xRec."Seminar Price") AND
+                                                                   (Status <> Status::Canceled)
+                                                                THEN BEGIN
+                                                                  SeminarRegLine.RESET;
+                                                                  SeminarRegLine.SETRANGE("Document No.","No.");
+                                                                  SeminarRegLine.SETRANGE(Registered,FALSE);
+                                                                  IF SeminarRegLine.FINDSET(FALSE,FALSE) THEN
+                                                                    IF CONFIRM(Text005,FALSE,
+                                                                         FIELDCAPTION("Seminar Price"),
+                                                                         SeminarRegLine.TABLECAPTION)
+                                                                    THEN BEGIN
+                                                                      REPEAT
+                                                                        SeminarRegLine.VALIDATE("Seminar Price","Seminar Price");
+                                                                        SeminarRegLine.MODIFY;
+                                                                      UNTIL SeminarRegLine.NEXT = 0;
+                                                                      MODIFY;
+                                                                    END;
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=ENU=Seminar Price;
+                                                   AutoFormatType=1 }
+    { 20  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group".Code;
+                                                   CaptionML=ENU=Gen. Prod. Posting Group }
+    { 21  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group".Code;
+                                                   CaptionML=ENU=VAT Prod. Posting Group }
+    { 22  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Seminar Comment Line" WHERE (Document Type=CONST(Seminar Registration),
+                                                                                                   No.=FIELD(No.)));
+                                                   CaptionML=ENU=Comment;
+                                                   Editable=No }
+    { 23  ;   ;Posting Date        ;Date          ;CaptionML=ENU=Posting Date }
+    { 24  ;   ;Document Date       ;Date          ;CaptionML=ENU=Document Date }
+    { 25  ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code".Code;
+                                                   CaptionML=ENU=Reason Code }
+    { 26  ;   ;No. Series          ;Code10        ;TableRelation="No. Series".Code;
+                                                   CaptionML=ENU=No. Series;
+                                                   Editable=No }
+    { 27  ;   ;Posting No. Series  ;Code10        ;TableRelation="No. Series".Code;
+                                                   OnValidate=BEGIN
+                                                                IF "Posting No. Series" <> '' THEN BEGIN
+                                                                  SeminarSetup.GET;
+                                                                  SeminarSetup.TESTFIELD("Seminar Registration Nos.");
+                                                                  SeminarSetup.TESTFIELD("Posted Seminar Reg. Nos.");
+                                                                  NoSeriesMgt.TestSeries(SeminarSetup."Posted Seminar Reg. Nos.","Posting No. Series");
+                                                                END;
+                                                                TESTFIELD("Posting No.",'');
+                                                              END;
+
+                                                   OnLookup=BEGIN
+                                                              WITH SeminarRegHeader DO BEGIN
+                                                                SeminarRegHeader := Rec;
+                                                                SeminarSetup.GET;
+                                                                SeminarSetup.TESTFIELD("Seminar Registration Nos.");
+                                                                SeminarSetup.TESTFIELD("Posted Seminar Reg. Nos.");
+                                                                IF NoSeriesMgt.LookupSeries(SeminarSetup."Posted Seminar Reg. Nos.","Posting No. Series")
+                                                                THEN BEGIN
+                                                                  VALIDATE("Posting No. Series");
+                                                                END;
+                                                                Rec := SeminarRegHeader;
+                                                              END;
+                                                            END;
+
+                                                   CaptionML=ENU=Posting No. Series }
+    { 28  ;   ;Posting No.         ;Code20        ;CaptionML=ENU=Posting No. }
+    { 40  ;   ;No. Printed         ;Integer       ;CaptionML=ENU=No. Printed;
+                                                   Editable=No }
+    { 51  ;   ;Shortcut Dimension 1 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(1,"Shortcut Dimension 1 Code");
+                                                              END;
+
+                                                   CaptionML=ENU=Shortcut Dimension 1 Code;
+                                                   CaptionClass='1,2,1' }
+    { 52  ;   ;Shortcut Dimension 2 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(2,"Shortcut Dimension 2 Code");
+                                                              END;
+
+                                                   CaptionML=ENU=Shortcut Dimension 2 Code;
+                                                   CaptionClass='1,2,2' }
+    { 61  ;   ;Registered Participants;Integer    ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Seminar Registration Line" WHERE (Document No.=FIELD(No.)));
+                                                   CaptionML=HRV=Registered Participants;
+                                                   Editable=No }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   OnLookup=BEGIN
+                                                              ShowDocDim;
+                                                            END;
+
+                                                   CaptionML=ENU=Dimension Set ID;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Room Resource No.                       ;SumIndexFields=Duration }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      PostCode@1000000016 : Record 225;
+      Seminar@1000000014 : Record 123456700;
+      SeminarCommentLine@1000000005 : Record 123456704;
+      SeminarCharge@1000000004 : Record 123456712;
+      SeminarRegHeader@1000000002 : Record 123456710;
+      SeminarRegLine@1000000003 : Record 123456711;
+      SeminarRoom@1000000015 : Record 156;
+      SeminarSetup@1000000000 : Record 123456701;
+      NoSeriesMgt@1000000001 : Codeunit 396;
+      Text001@1000000013 : TextConst 'ENU="You cannot delete the Seminar Registration, because there is at least one %1 where %2=%3."';
+      Text002@1000000012 : TextConst 'ENU="You cannot change the %1, because there is at least one %2 with %3=%4."';
+      Text004@1000000010 : TextConst 'ENU=This Seminar is for %1 participants. \The selected Room has a maximum of %2 participants \Do you want to change %3 for the Seminar from %4 to %5?';
+      Text005@1000000009 : TextConst 'ENU=Should the new %1 be copied to all %2 that are not yet invoiced?';
+      Text006@1000000008 : TextConst 'ENU=You cannot delete the Seminar Registration, because there is at least one %1.';
+      DimMgt@1000 : Codeunit 408;
+      Text009@1001 : TextConst 'ENU=You may have changed a dimension.\\Do you want to update the lines?';
+
+    PROCEDURE AssistEdit@1000000002(OldSeminarRegHeader@1000000000 : Record 123456710) : Boolean;
+    BEGIN
+      WITH SeminarRegHeader DO BEGIN
+        SeminarRegHeader := Rec;
+        SeminarSetup.GET;
+        SeminarSetup.TESTFIELD("Seminar Registration Nos.");
+        IF NoSeriesMgt.SelectSeries(SeminarSetup."Seminar Registration Nos.",OldSeminarRegHeader."No. Series","No. Series") THEN BEGIN
+          SeminarSetup.GET;
+          SeminarSetup.TESTFIELD("Seminar Registration Nos.");
+          NoSeriesMgt.SetSeries("No.");
+          Rec := SeminarRegHeader;
+          EXIT(TRUE);
+        END;
+      END;
+    END;
+
+    PROCEDURE InitRecord@2();
+    BEGIN
+      IF "Posting Date" = 0D THEN
+        "Posting Date" := WORKDATE;
+      "Document Date" := WORKDATE;
+      SeminarSetup.GET;
+      NoSeriesMgt.SetDefaultSeries("Posting No. Series",SeminarSetup."Posted Seminar Reg. Nos.");
+    END;
+
+    PROCEDURE SeminarRegLinesExist@1() : Boolean;
+    BEGIN
+      SeminarRegLine.RESET;
+      SeminarRegLine.SETRANGE("Document No.","No.");
+      EXIT(SeminarRegLine.FINDFIRST);
+    END;
+
+    PROCEDURE CreateDim@3(Type1@1000 : Integer;No1@1001 : Code[20];Type2@1002 : Integer;No2@1003 : Code[20];Type3@1004 : Integer;No3@1005 : Code[10]);
+    VAR
+      SourceCodeSetup@1006 : Record 242;
+      TableID@1007 : ARRAY [10] OF Integer;
+      No@1008 : ARRAY [10] OF Code[20];
+      OldDimSetID@1009 : Integer;
+    BEGIN
+      SourceCodeSetup.GET;
+      TableID[1] := Type1;
+      No[1] := No1;
+      TableID[2] := Type2;
+      No[2] := No2;
+      TableID[3] := Type3;
+      No[3] := No3;
+      "Shortcut Dimension 1 Code" := '';
+      "Shortcut Dimension 2 Code" := '';
+      OldDimSetID := "Dimension Set ID";
+      "Dimension Set ID" :=
+        DimMgt.GetDefaultDimID(TableID,No,
+        SourceCodeSetup.Seminar,
+        "Shortcut Dimension 1 Code",
+        "Shortcut Dimension 2 Code",0,0);
+      IF (OldDimSetID <> "Dimension Set ID") AND
+        SeminarRegLinesExist
+      THEN BEGIN
+        MODIFY;
+        UpdateAllLineDim("Dimension Set ID",OldDimSetID);
+      END;
+    END;
+
+    PROCEDURE ValidateShortcutDimCode@4(FieldNumber@1000 : Integer;VAR ShortcutDimCode@1001 : Code[20]);
+    VAR
+      OldDimSetID@1002 : Integer;
+    BEGIN
+      OldDimSetID := "Dimension Set ID";
+      DimMgt.ValidateShortcutDimValues(
+        FieldNumber,
+        ShortcutDimCode,
+        "Dimension Set ID");
+      IF "No." <> '' THEN
+        MODIFY;
+      IF OldDimSetID <> "Dimension Set ID" THEN BEGIN
+        MODIFY;
+        IF SeminarRegLinesExist THEN
+          UpdateAllLineDim(
+            "Dimension Set ID",
+            OldDimSetID);
+      END;
+    END;
+
+    PROCEDURE ShowDocDim@5();
+    VAR
+      OldDimSetID@1000 : Integer;
+    BEGIN
+      OldDimSetID := "Dimension Set ID";
+      "Dimension Set ID" :=
+        DimMgt.EditDimensionSet2(
+          "Dimension Set ID","No.",
+          "Shortcut Dimension 1 Code",
+          "Shortcut Dimension 2 Code");
+      IF OldDimSetID <> "Dimension Set ID" THEN BEGIN
+        MODIFY;
+        IF SeminarRegLinesExist THEN
+          UpdateAllLineDim(
+            "Dimension Set ID",
+            OldDimSetID);
+      END;
+    END;
+
+    PROCEDURE UpdateAllLineDim@7(NewParentDimSetID@1000 : Integer;OldParentDimSetID@1001 : Integer);
+    VAR
+      NewDimSetID@1002 : Integer;
+    BEGIN
+      IF NewParentDimSetID = OldParentDimSetID THEN
+        EXIT;
+      IF NOT CONFIRM(Text009) THEN
+        EXIT;
+      SeminarRegLine.RESET;
+      SeminarRegLine.SETRANGE("Document No.","No.");
+      SeminarRegLine.LOCKTABLE;
+      IF SeminarRegLine.FIND('-') THEN
+        REPEAT
+          NewDimSetID := DimMgt.GetDeltaDimSetID(
+            SeminarRegLine."Dimension Set ID",
+            NewParentDimSetID,
+            OldParentDimSetID);
+          IF SeminarRegLine."Dimension Set ID" <> NewDimSetID
+          THEN BEGIN
+            SeminarRegLine."Dimension Set ID" := NewDimSetID;
+            DimMgt.UpdateGlobalDimFromDimSetID(
+              SeminarRegLine."Dimension Set ID",
+              SeminarRegLine."Shortcut Dimension 1 Code",
+              SeminarRegLine."Shortcut Dimension 2 Code");
+            SeminarRegLine.MODIFY;
+          END;
+        UNTIL SeminarRegLine.NEXT = 0;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-01 - D. E. Veloper
+        Chapter 3 - Lab 1
+          - Created new table
+
+      CSD1.00 - 2013-05-01 - D. E. Veloper
+        Chapter 5 - Lab 1
+          - Added code to the OnInsert trigger to apply the record link filter
+
+      CSD1.00 - 2013-06-01 - D. E. Veloper
+        Chapter 5 - Lab 1
+          - Added fields:
+            - No. Printed
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added new fields:
+            - Shortcut Dimension 1 Code
+            - Shortcut Dimension 2 Code
+            - Dimension Set ID
+          - Added functions and modified triggers to support Dimension integration
+
+      CSD1.00 - 2013-11-01 - D. E. Veloper
+        Chapter 11 - Lab 1
+          - Added fields:
+            - Registered Participants
+    }
+    END.
+  }
+}
+

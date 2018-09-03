@@ -1,0 +1,52 @@
+OBJECT Page 123456717 Seminar Details FactBox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/03/13;
+    Time=23:06:56;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Details;
+    SourceTable=Table123456700;
+    PageType=CardPart;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Field     ;
+                SourceExpr="No." }
+
+    { 3   ;1   ;Field     ;
+                SourceExpr=Name }
+
+    { 4   ;1   ;Field     ;
+                SourceExpr="Seminar Duration" }
+
+    { 5   ;1   ;Field     ;
+                SourceExpr="Minimum Participants" }
+
+    { 6   ;1   ;Field     ;
+                SourceExpr="Maximum Participants" }
+
+    { 7   ;1   ;Field     ;
+                SourceExpr="Seminar Price" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-02 - D. E. Veloper
+        Chapter 3 - Lab 2
+          - Created new page
+    }
+    END.
+  }
+}
+

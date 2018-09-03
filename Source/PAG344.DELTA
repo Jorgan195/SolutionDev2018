@@ -1,0 +1,110 @@
+OBJECT Modification Navigate(Page 344)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=10:17:10;
+    Modified=Yes;
+    Version List=NAVW111.00.00.21836,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target=Navigate(Page 344);
+    TargetPageType=Worksheet;
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-05-02 - D. E. Veloper
+                                           Chapter 5 - Lab 2
+                                             - Integrated with Seminar Management functionality
+                                       END;
+                                        }
+    { CodeModification  ;OriginalCode=BEGIN
+                                        Window.OPEN(Text002);
+                                        RESET;
+                                        DELETEALL;
+                                        #4..309
+                                            DATABASE::"Cost Entry",0,CostEntry.TABLECAPTION,CostEntry.COUNT);
+                                        END;
+                                        OnAfterNavigateFindRecords(Rec,DocNoFilter,PostingDateFilter);
+                                        DocExists := FINDFIRST;
+
+                                        SetSource(0D,'','',0,'');
+                                        #316..476
+                                        IF UpdateForm THEN
+                                          UpdateFormAfterFindRecords;
+                                        Window.CLOSE;
+                                      END;
+
+                         ModifiedCode=BEGIN
+                                        #1..312
+                                        //CSD1.00>
+                                        IF PostedSeminarRegHeader.READPERMISSION THEN BEGIN
+                                          PostedSeminarRegHeader.RESET;
+                                          PostedSeminarRegHeader.SETFILTER("No.",DocNoFilter);
+                                          PostedSeminarRegHeader.SETFILTER("Posting Date",PostingDateFilter);
+                                          InsertIntoDocEntry(
+                                            DATABASE::"Posted Seminar Reg. Header",0,PostedSeminarRegHeader.TABLECAPTION,
+                                            PostedSeminarRegHeader.COUNT);
+                                        END;
+                                        IF SeminarLedgEntry.READPERMISSION THEN BEGIN
+                                          SeminarLedgEntry.RESET;
+                                          SeminarLedgEntry.SETCURRENTKEY("Document No.","Posting Date");
+                                          SeminarLedgEntry.SETFILTER("Document No.",DocNoFilter);
+                                          SeminarLedgEntry.SETFILTER("Posting Date",PostingDateFilter);
+                                          InsertIntoDocEntry(
+                                            DATABASE::"Seminar Ledger Entry",0,SeminarLedgEntry.TABLECAPTION,
+                                            SeminarLedgEntry.COUNT);
+                                        END;
+                                        //CSD1.00<
+
+                                        #313..479
+                                      END;
+
+                         Target=FindRecords(PROCEDURE 2) }
+    { CodeModification  ;OriginalCode=BEGIN
+                                        IF ItemTrackingSearch THEN
+                                          ItemTrackingNavigateMgt.Show("Table ID")
+                                        ELSE
+                                        #4..145
+                                              PAGE.RUN(0,WarrantyLedgerEntry);
+                                            DATABASE::"Cost Entry":
+                                              PAGE.RUN(0,CostEntry);
+                                          END;
+
+                                        OnAfterNavigateShowRecords("Table ID",DocNoFilter,PostingDateFilter,ItemTrackingSearch);
+                                      END;
+
+                         ModifiedCode=BEGIN
+                                        #1..148
+                                            //CSD1.00>
+                                            DATABASE::"Posted Seminar Reg. Header":
+                                              PAGE.RUN(0,PostedSeminarRegHeader);
+                                            DATABASE::"Seminar Ledger Entry":
+                                              PAGE.RUN(0,SeminarLedgEntry);
+                                            //CSD1.00<
+                                        #149..151
+                                      END;
+
+                         Target=ShowRecords(PROCEDURE 6) }
+    { Insertion         ;InsertAfter=PageCaptionTxt(Variable 1108);
+                         ChangedElements=VariableCollection
+                         {
+                           PostedSeminarRegHeader@1111 : Record 123456718;
+                           SeminarLedgEntry@1110 : Record 123456732;
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.21836;
+                         ModifiedValue=NAVW111.00.00.21836,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

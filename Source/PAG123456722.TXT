@@ -1,0 +1,79 @@
+OBJECT Page 123456722 Seminar Registers
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/04/13;
+    Time=15:57:07;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    SourceTable=Table123456733;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 13      ;    ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 14      ;1   ;ActionGroup;
+                      CaptionML=ENU=Register }
+      { 15      ;2   ;Action    ;
+                      CaptionML=ENU=Seminar Ledger;
+                      RunObject=Codeunit 123456734;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=WarrantyLedger;
+                      PromotedCategory=Process }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr="Creation Date" }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr="User ID" }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr="Source Code" }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Journal Batch Name" }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr="From Entry No." }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="To Entry No." }
+
+    { 10  ;0   ;Container ;
+                ContainerType=FactBoxArea }
+
+    { 11  ;1   ;Part      ;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 12  ;1   ;Part      ;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

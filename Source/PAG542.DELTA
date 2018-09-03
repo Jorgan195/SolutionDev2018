@@ -1,0 +1,57 @@
+OBJECT Modification "Default Dimensions-Multiple"(Page 542)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=10:20:46;
+    Modified=Yes;
+    Version List=NAVW111.00,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Default Dimensions-Multiple"(Page 542);
+    TargetPageType=List;
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-08-01 - D. E. Veloper
+                                           Chapter 8 - Lab 1
+                                             - Added functions:
+                                               - SetMultiSeminar
+                                       END;
+                                        }
+    { Insertion         ;InsertAfter=ValuePostingOnFormat(PROCEDURE 19024282);
+                         ChangedElements=PROCEDURECollection
+                         {
+                           PROCEDURE "--- CSD1.00 Functions ---"@23();
+                           BEGIN
+                           END;
+
+                           PROCEDURE SetMultiSeminar@24(VAR Seminar@1000 : Record 123456700);
+                           BEGIN
+                             //CSD1.00>
+                             TempDefaultDim2.DELETEALL;
+                             WITH Seminar DO
+                               IF FIND('-') THEN
+                                 REPEAT
+                                   CopyDefaultDimToDefaultDim(DATABASE::Seminar,"No.");
+                                 UNTIL NEXT = 0;
+                             //CSD1.00<
+                           END;
+
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00;
+                         ModifiedValue=NAVW111.00,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

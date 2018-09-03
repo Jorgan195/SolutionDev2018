@@ -1,0 +1,48 @@
+OBJECT Table 123456701 Seminar Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/10/13;
+    Time=01:13:45;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Setup;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=ENU=Primary Key }
+    { 2   ;   ;Seminar Nos.        ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=ENU=Seminar Nos. }
+    { 3   ;   ;Seminar Registration Nos.;Code10   ;TableRelation="No. Series";
+                                                   CaptionML=ENU=Seminar Registration Nos. }
+    { 4   ;   ;Posted Seminar Reg. Nos.;Code10    ;TableRelation="No. Series";
+                                                   CaptionML=ENU=Posted Seminar Reg. Nos. }
+    { 5   ;   ;Confirmation Template File;Text250 ;CaptionML=ENU=Confirmation Template File }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-02-02 - D. E. Veloper
+        Chapter 2 - Lab 2
+          - Created new table
+
+      CSD1.00 - 2013-10-01 - D. E. Veloper
+        Chapter 10 - Lab 1
+          - Added the Confirmation Template File field
+    }
+    END.
+  }
+}
+

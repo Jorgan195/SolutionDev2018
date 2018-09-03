@@ -1,0 +1,52 @@
+OBJECT Modification Resource(Table 156)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=09:47:47;
+    Modified=Yes;
+    Version List=NAVW111.00.00.21836,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target=Resource(Table 156);
+  }
+  CHANGES
+  {
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-02-01 - D. E. Veloper
+                                           Chapter 2 - Lab 1
+                                             - Added new fields:
+                                               - Internal/External
+                                               - Maximum Participants
+                                       END;
+                                        }
+    { Insertion         ;InsertAfter="In Customer Zone"(Field 5902);
+                         ChangedElements=FieldCollection
+                         {
+                           { 123456701;;Internal/External ;Option        ;DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Internal/External;
+                                                                          OptionCaptionML=ENU=Internal,External;
+                                                                          OptionString=Internal,External;
+                                                                          Description=CSD1.00 }
+                           { 123456702;;Maximum Participants;Integer     ;DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Maximum Participants;
+                                                                          Description=CSD1.00 }
+                           { 123456703;;Quantity Per Day  ;Decimal       ;DataClassification=ToBeClassified;
+                                                                          CaptionML=ENU=Quantity Per Day;
+                                                                          Description=CSD1.00 }
+                         }
+                          }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.21836;
+                         ModifiedValue=NAVW111.00.00.21836,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

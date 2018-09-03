@@ -1,0 +1,62 @@
+OBJECT Table 123456705 Seminar Report Selections
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/06/13;
+    Time=19:10:06;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Report Selections;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Usage               ;Option        ;CaptionML=ENU=Usage;
+                                                   OptionCaptionML=ENU=Registration;
+                                                   OptionString=Registration }
+    { 2   ;   ;Sequence            ;Code10        ;CaptionML=ENU=Sequence;
+                                                   Numeric=Yes }
+    { 3   ;   ;Report ID           ;Integer       ;TableRelation=Object.ID WHERE (Type=CONST(Report));
+                                                   OnValidate=BEGIN
+                                                                CALCFIELDS("Report Name");
+                                                              END;
+
+                                                   CaptionML=ENU=Report ID }
+    { 4   ;   ;Report Name         ;Text80        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Report),
+                                                                                                                Object ID=FIELD(Report ID)));
+                                                   CaptionML=ENU=Report Name }
+  }
+  KEYS
+  {
+    {    ;Usage,Sequence                          ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ReportSelection2@1000 : Record 123456705;
+
+    PROCEDURE NewRecord@1();
+    BEGIN
+      ReportSelection2.SETRANGE(Usage,Usage);
+      IF ReportSelection2.FIND('+') AND (ReportSelection2.Sequence <> '') THEN
+        Sequence := INCSTR(ReportSelection2.Sequence)
+      ELSE
+        Sequence := '1';
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-06-01 - D. E. Veloper
+        Chapter 6 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

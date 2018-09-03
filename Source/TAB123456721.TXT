@@ -1,0 +1,69 @@
+OBJECT Table 123456721 Posted Seminar Charge
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/04/13;
+    Time=13:14:18;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Posted Seminar Charge;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Document No.        ;Code20        ;TableRelation="Posted Seminar Reg. Header";
+                                                   CaptionML=ENU=Document No.;
+                                                   NotBlank=Yes }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=ENU=Line No. }
+    { 3   ;   ;Type                ;Option        ;CaptionML=ENU=Type;
+                                                   OptionCaptionML=ENU=Resource,G/L Account;
+                                                   OptionString=Resource,G/L Account }
+    { 4   ;   ;No.                 ;Code20        ;TableRelation=IF (Type=CONST(Resource)) Resource.No.
+                                                                 ELSE IF (Type=CONST(G/L Account)) "G/L Account".No.;
+                                                   CaptionML=ENU=No. }
+    { 5   ;   ;Description         ;Text50        ;CaptionML=ENU=Description }
+    { 6   ;   ;Quantity            ;Decimal       ;CaptionML=ENU=Quantity;
+                                                   DecimalPlaces=0:5 }
+    { 7   ;   ;Unit Price          ;Decimal       ;CaptionML=ENU=Unit Price;
+                                                   MinValue=0;
+                                                   AutoFormatType=2 }
+    { 8   ;   ;Total Price         ;Decimal       ;CaptionML=ENU=Total Price;
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+    { 9   ;   ;To Invoice          ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=ENU=To Invoice }
+    { 10  ;   ;Bill-to Customer No.;Code20        ;TableRelation=Customer.No.;
+                                                   CaptionML=ENU=Bill-to Customer No. }
+    { 11  ;   ;Unit of Measure Code;Code10        ;TableRelation=IF (Type=CONST(Resource)) "Resource Unit of Measure".Code WHERE (Resource No.=FIELD(No.))
+                                                                 ELSE "Unit of Measure".Code;
+                                                   CaptionML=ENU=Unit of Measure Code }
+    { 12  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group".Code;
+                                                   CaptionML=ENU=Gen. Prod. Posting Group }
+    { 13  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group".Code;
+                                                   CaptionML=ENU=VAT Prod. Posting Group }
+    { 14  ;   ;Qty. per Unit of Measure;Decimal   ;CaptionML=ENU=Qty. per Unit of Measure }
+    { 15  ;   ;Registered          ;Boolean       ;CaptionML=ENU=Registered;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Document No.,Line No.                   ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-03 - D. E. Veloper
+        Chapter 4 - Lab 3
+          - Created new table
+    }
+    END.
+  }
+}
+

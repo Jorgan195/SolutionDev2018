@@ -1,0 +1,146 @@
+OBJECT Page 123456714 Seminar Statistics
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/07/13;
+    Time=19:53:20;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    SourceTable=Table123456700;
+    PageType=Card;
+    OnAfterGetRecord=BEGIN
+                       SETRANGE("No.","No.");
+                       IF CurrentDate <> WORKDATE THEN BEGIN
+                         CurrentDate := WORKDATE;
+                         DateFilterCalc.CreateAccountingPeriodFilter(SeminarDateFilter[1],SeminarDateName[1],CurrentDate,0);
+                         DateFilterCalc.CreateFiscalYearFilter(SeminarDateFilter[2],SeminarDateName[2],CurrentDate,0);
+                         DateFilterCalc.CreateFiscalYearFilter(SeminarDateFilter[3],SeminarDateName[3],CurrentDate,-1);
+                       END;
+
+                       FOR i := 1 TO 4 DO BEGIN
+                         SETFILTER("Date Filter",SeminarDateFilter[i]);
+                         CALCFIELDS("Total Price","Total Price (Not Chargeable)","Total Price (Chargeable)");
+                         TotalPrice[i] := "Total Price";
+                         TotalPriceNotChargeable[i] := "Total Price (Not Chargeable)";
+                         TotalPriceChargeable[i] := "Total Price (Chargeable)";
+                       END;
+                       SETRANGE("Date Filter",0D,CurrentDate);
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1000000000;;Container;
+                ContainerType=ContentArea }
+
+    { 1000000001;1;Group  ;
+                CaptionML=ENU=General;
+                GroupType=Group }
+
+    { 1000000002;2;Group  ;
+                GroupType=FixedLayout }
+
+    { 1000000007;3;Group  ;
+                CaptionML=ENU=This Period;
+                GroupType=Group }
+
+    { 1000000003;4;Field  ;
+                SourceExpr=SeminarDateName[1] }
+
+    { 1000000004;4;Field  ;
+                CaptionML=ENU=Total Price;
+                SourceExpr=TotalPrice[1] }
+
+    { 1000000005;4;Field  ;
+                CaptionML=ENU=Total Price (Not Chargeable);
+                SourceExpr=TotalPriceNotChargeable[1] }
+
+    { 1000000006;4;Field  ;
+                CaptionML=ENU=Total Price (Chargeable);
+                SourceExpr=TotalPriceChargeable[1] }
+
+    { 1000000008;3;Group  ;
+                CaptionML=ENU=This Year;
+                GroupType=Group }
+
+    { 1000000009;4;Field  ;
+                SourceExpr=SeminarDateName[2] }
+
+    { 1000000012;4;Field  ;
+                CaptionML=ENU=Total Price;
+                SourceExpr=TotalPrice[2] }
+
+    { 1000000011;4;Field  ;
+                CaptionML=ENU=Total Price (Not Chargeable);
+                SourceExpr=TotalPriceNotChargeable[2] }
+
+    { 1000000010;4;Field  ;
+                CaptionML=ENU=Total Price (Chargeable);
+                SourceExpr=TotalPriceChargeable[2] }
+
+    { 1000000013;3;Group  ;
+                CaptionML=ENU=Last Year;
+                GroupType=Group }
+
+    { 1000000017;4;Field  ;
+                SourceExpr=SeminarDateName[3] }
+
+    { 1000000016;4;Field  ;
+                CaptionML=ENU=Total Price;
+                SourceExpr=TotalPrice[3] }
+
+    { 1000000015;4;Field  ;
+                CaptionML=ENU=Total Price (Not Chargeable);
+                SourceExpr=TotalPriceNotChargeable[3] }
+
+    { 1000000014;4;Field  ;
+                CaptionML=ENU=Total Price (Chargeable);
+                SourceExpr=TotalPriceChargeable[3] }
+
+    { 1000000022;3;Group  ;
+                CaptionML=ENU=To Date;
+                GroupType=Group }
+
+    { 1000000021;4;Field  ;
+                SourceExpr=SeminarDateName[4] }
+
+    { 1000000020;4;Field  ;
+                CaptionML=ENU=Total Price;
+                SourceExpr=TotalPrice[4] }
+
+    { 1000000019;4;Field  ;
+                CaptionML=ENU=Total Price (Not Chargeable);
+                SourceExpr=TotalPriceNotChargeable[4] }
+
+    { 1000000018;4;Field  ;
+                CaptionML=ENU=Total Price (Chargeable);
+                SourceExpr=TotalPriceChargeable[4] }
+
+  }
+  CODE
+  {
+    VAR
+      DateFilterCalc@1000000000 : Codeunit 358;
+      SeminarDateFilter@1000000001 : ARRAY [4] OF Text[30];
+      SeminarDateName@1000000002 : ARRAY [4] OF Text[30];
+      CurrentDate@1000000003 : Date;
+      TotalPrice@1000000004 : ARRAY [4] OF Decimal;
+      TotalPriceNotChargeable@1000000005 : ARRAY [4] OF Decimal;
+      TotalPriceChargeable@1000000006 : ARRAY [4] OF Decimal;
+      i@1000000007 : Integer;
+      Text01@1000000008 : TextConst 'ENU=Placeholder';
+
+    BEGIN
+    {
+      CSD1.00 - 2013-07-01 - D. E. Veloper
+        Chapter 7 - Lab 1
+          - New page created
+    }
+    END.
+  }
+}
+

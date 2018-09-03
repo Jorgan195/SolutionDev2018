@@ -1,0 +1,47 @@
+OBJECT Modification "Resource Ledger Entries"(Page 202)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=10:13:12;
+    Modified=Yes;
+    Version List=NAVW111.00.00.19846,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Resource Ledger Entries"(Page 202);
+    TargetPageType=List;
+  }
+  CHANGES
+  {
+    { Insertion         ;InsertAfter=Control 14;
+                         ChangedElements=ControlCollection
+                         {
+                           { 9   ;2   ;Field     ;
+                                       SourceExpr="Seminar No." }
+
+                           { 7   ;2   ;Field     ;
+                                       SourceExpr="Seminar Registration No." }
+
+                         }
+                          }
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-04-04 - D. E. Veloper
+                                           Chapter 4 - Lab 4
+                                             - Added the Seminar No. field to the Repeater control
+                                             - Added the Seminar Registration No. field to the Repeater control
+                                       END;
+                                        }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00.00.19846;
+                         ModifiedValue=NAVW111.00.00.19846,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

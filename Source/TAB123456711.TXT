@@ -1,0 +1,279 @@
+OBJECT Table 123456711 Seminar Registration Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=23:08:17;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               GetSeminarRegHeader;
+               "Registration Date" := WORKDATE;
+               "Seminar Price" := SeminarRegHeader."Seminar Price";
+               Amount := SeminarRegHeader."Seminar Price";
+             END;
+
+    OnDelete=BEGIN
+               TESTFIELD(Registered,FALSE);
+             END;
+
+    CaptionML=ENU=Seminar Registration Line;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Document No.        ;Code20        ;TableRelation="Seminar Registration Header";
+                                                   CaptionML=ENU=Document No. }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=ENU=Line No. }
+    { 3   ;   ;Bill-to Customer No.;Code20        ;TableRelation=Customer;
+                                                   OnValidate=BEGIN
+                                                                IF "Bill-to Customer No." <> xRec."Bill-to Customer No." THEN BEGIN
+                                                                  IF Registered THEN BEGIN
+                                                                    ERROR(Text001,
+                                                                      FIELDCAPTION("Bill-to Customer No."),
+                                                                      FIELDCAPTION(Registered),
+                                                                      Registered);
+                                                                  END;
+                                                                END;
+
+                                                                CreateDim(DATABASE::Customer,"Bill-to Customer No.");
+                                                              END;
+
+                                                   CaptionML=ENU=Bill-to Customer No. }
+    { 4   ;   ;Participant Contact No.;Code20     ;TableRelation=Contact;
+                                                   OnValidate=BEGIN
+                                                                IF ("Bill-to Customer No." <> '') AND
+                                                                   ("Participant Contact No." <> '')
+                                                                THEN BEGIN
+                                                                  Contact.GET("Participant Contact No.");
+                                                                  ContactBusinessRelation.RESET;
+                                                                  ContactBusinessRelation.SETCURRENTKEY("Link to Table","No.");
+                                                                  ContactBusinessRelation.SETRANGE("Link to Table",ContactBusinessRelation."Link to Table"::Customer);
+                                                                  ContactBusinessRelation.SETRANGE("No.","Bill-to Customer No.");
+                                                                  IF ContactBusinessRelation.FINDFIRST THEN BEGIN
+                                                                    IF ContactBusinessRelation."Contact No." <> Contact."Company No." THEN BEGIN
+                                                                      ERROR(Text002,Contact."No.",Contact.Name,"Bill-to Customer No.");
+                                                                    END;
+                                                                  END;
+                                                                END;
+                                                              END;
+
+                                                   OnLookup=BEGIN
+                                                              ContactBusinessRelation.RESET;
+                                                              ContactBusinessRelation.SETRANGE("Link to Table",ContactBusinessRelation."Link to Table"::Customer);
+                                                              ContactBusinessRelation.SETRANGE("No.","Bill-to Customer No.");
+                                                              IF ContactBusinessRelation.FINDFIRST THEN BEGIN
+                                                                Contact.SETRANGE("Company No.",ContactBusinessRelation."Contact No.");
+                                                                IF PAGE.RUNMODAL(PAGE::"Contact List",Contact) = ACTION::LookupOK THEN BEGIN
+                                                                  "Participant Contact No." := Contact."No.";
+                                                                END;
+                                                              END;
+
+                                                              CALCFIELDS("Participant Name");
+                                                            END;
+
+                                                   CaptionML=ENU=Participant Contact No. }
+    { 5   ;   ;Participant Name    ;Text50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Contact.Name WHERE (No.=FIELD(Participant Contact No.)));
+                                                   CaptionML=ENU=Participant Name;
+                                                   Editable=No }
+    { 6   ;   ;Registration Date   ;Date          ;CaptionML=ENU=Registration Date;
+                                                   Editable=No }
+    { 7   ;   ;To Invoice          ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=ENU=To Invoice }
+    { 8   ;   ;Participated        ;Boolean       ;CaptionML=ENU=Participated }
+    { 9   ;   ;Confirmation Date   ;Date          ;CaptionML=ENU=Confirmation Date;
+                                                   Editable=No }
+    { 10  ;   ;Seminar Price       ;Decimal       ;OnValidate=BEGIN
+                                                                VALIDATE("Line Discount %");
+                                                              END;
+
+                                                   CaptionML=ENU=Seminar Price;
+                                                   AutoFormatType=2 }
+    { 11  ;   ;Line Discount %     ;Decimal       ;OnValidate=BEGIN
+                                                                IF "Seminar Price" = 0 THEN BEGIN
+                                                                  "Line Discount Amount" := 0;
+                                                                END ELSE BEGIN
+                                                                  GLSetup.GET;
+                                                                  "Line Discount Amount" := ROUND("Line Discount %" * "Seminar Price" * 0.01,GLSetup."Amount Rounding Precision");
+                                                                END;
+                                                                UpdateAmount;
+                                                              END;
+
+                                                   CaptionML=ENU=Line Discount %;
+                                                   DecimalPlaces=0:5;
+                                                   MinValue=0;
+                                                   MaxValue=100 }
+    { 12  ;   ;Line Discount Amount;Decimal       ;OnValidate=BEGIN
+                                                                IF "Seminar Price" = 0 THEN BEGIN
+                                                                  "Line Discount %" := 0;
+                                                                END ELSE BEGIN
+                                                                  GLSetup.GET;
+                                                                  "Line Discount %" := ROUND("Line Discount Amount" / "Seminar Price" * 100,GLSetup."Amount Rounding Precision");
+                                                                END;
+                                                                UpdateAmount;
+                                                              END;
+
+                                                   CaptionML=ENU=Line Discount Amount;
+                                                   AutoFormatType=1 }
+    { 13  ;   ;Amount              ;Decimal       ;OnValidate=BEGIN
+                                                                TESTFIELD("Bill-to Customer No.");
+                                                                TESTFIELD("Seminar Price");
+                                                                GLSetup.GET;
+                                                                Amount := ROUND(Amount,GLSetup."Amount Rounding Precision");
+                                                                "Line Discount Amount" := "Seminar Price" - Amount;
+                                                                IF "Seminar Price" = 0 THEN BEGIN
+                                                                  "Line Discount %" := 0;
+                                                                END ELSE BEGIN
+                                                                  "Line Discount %" := ROUND("Line Discount Amount" / "Seminar Price" * 100,GLSetup."Amount Rounding Precision");
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=ENU=Amount;
+                                                   AutoFormatType=1 }
+    { 14  ;   ;Registered          ;Boolean       ;CaptionML=ENU=Registered;
+                                                   Editable=No }
+    { 51  ;   ;Shortcut Dimension 1 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(1,"Shortcut Dimension 1 Code");
+                                                              END;
+
+                                                   CaptionML=ENU=Shortcut Dimension 1 Code;
+                                                   CaptionClass='1,2,1' }
+    { 52  ;   ;Shortcut Dimension 2 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   OnValidate=BEGIN
+                                                                ValidateShortcutDimCode(2,"Shortcut Dimension 2 Code");
+                                                              END;
+
+                                                   CaptionML=ENU=Shortcut Dimension 2 Code;
+                                                   CaptionClass='1,2,2' }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   OnLookup=BEGIN
+                                                              ShowDimensions;
+                                                            END;
+
+                                                   CaptionML=ENU=Dimension Set ID;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Document No.,Line No.                   ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      SeminarRegHeader@1000000005 : Record 123456710;
+      SeminarRegLine@1000000004 : Record 123456711;
+      ContactBusinessRelation@1000000003 : Record 5054;
+      Contact@1000000002 : Record 5050;
+      GLSetup@1000000001 : Record 98;
+      DimMgt@1000 : Codeunit 408;
+      SkipBillToContact@1000000000 : Boolean;
+      Text001@1000000007 : TextConst 'ENU=You cannot change the %1, because %2 is %3.';
+      Text002@1000000006 : TextConst 'ENU=Contact %1 %2 is related to a different company than customer %3.';
+
+    PROCEDURE GetSeminarRegHeader@1();
+    BEGIN
+      IF SeminarRegHeader."No." <> "Document No." THEN BEGIN
+        SeminarRegHeader.GET("Document No.");
+      END;
+    END;
+
+    PROCEDURE CalculateAmount@4();
+    BEGIN
+      Amount := ROUND(("Seminar Price" / 100) * (100 - "Line Discount %"));
+    END;
+
+    PROCEDURE UpdateAmount@2();
+    BEGIN
+      GLSetup.GET;
+      Amount := ROUND("Seminar Price" - "Line Discount Amount",GLSetup."Amount Rounding Precision");
+    END;
+
+    PROCEDURE ShowDimensions@3();
+    BEGIN
+      "Dimension Set ID" :=
+        DimMgt.EditDimensionSet(
+          "Dimension Set ID",
+          STRSUBSTNO('%1 %2',
+          "Document No.",
+          "Line No."));
+      DimMgt.UpdateGlobalDimFromDimSetID(
+        "Dimension Set ID",
+        "Shortcut Dimension 1 Code",
+        "Shortcut Dimension 2 Code");
+    END;
+
+    PROCEDURE CreateDim@5(Type1@1000 : Integer;No1@1001 : Code[20]);
+    VAR
+      SourceCodeSetup@1002 : Record 242;
+      TableID@1003 : ARRAY [10] OF Integer;
+      No@1004 : ARRAY [10] OF Code[20];
+    BEGIN
+      SourceCodeSetup.GET;
+      TableID[1] := Type1;
+      No[1] := No1;
+      "Shortcut Dimension 1 Code" := '';
+      "Shortcut Dimension 2 Code" := '';
+      GetSeminarRegHeader;
+      "Dimension Set ID" :=
+        DimMgt.GetDefaultDimID(
+          TableID,No,SourceCodeSetup.Seminar,
+          "Shortcut Dimension 1 Code",
+          "Shortcut Dimension 2 Code",
+          SeminarRegHeader."Dimension Set ID",
+          DATABASE::Seminar);
+      DimMgt.UpdateGlobalDimFromDimSetID(
+        "Dimension Set ID",
+        "Shortcut Dimension 1 Code",
+        "Shortcut Dimension 2 Code");
+    END;
+
+    PROCEDURE ValidateShortcutDimCode@7(FieldNumber@1000 : Integer;VAR ShortcutDimCode@1001 : Code[20]);
+    BEGIN
+      DimMgt.ValidateShortcutDimValues(
+        FieldNumber,
+        ShortcutDimCode,
+        "Dimension Set ID");
+    END;
+
+    PROCEDURE LookupShortcutDimCode@9(FieldNumber@1001 : Integer;VAR ShortcutDimCode@1000 : Code[20]);
+    BEGIN
+      DimMgt.LookupDimValueCode(
+        FieldNumber,
+        ShortcutDimCode);
+      ValidateShortcutDimCode(
+        FieldNumber,
+        ShortcutDimCode);
+    END;
+
+    PROCEDURE ShowShortcutDimCode@11(VAR ShortcutDimCode@1000 : ARRAY [8] OF Code[20]);
+    BEGIN
+      DimMgt.GetShortcutDimensions(
+        "Dimension Set ID",
+        ShortcutDimCode);
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-03-01 - D. E. Veloper
+        Chapter 3 - Lab 1
+          - Created new table
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added new fields:
+            - Shortcut Dimension 1 Code
+            - Shortcut Dimension 2 Code
+            - Dimension Set ID
+          - Added functions and modified triggers to support Dimension integration
+    }
+    END.
+  }
+}
+

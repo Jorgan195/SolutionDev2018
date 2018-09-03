@@ -1,0 +1,48 @@
+OBJECT Modification "Source Code Setup"(Page 279)
+{
+  OBJECT-PROPERTIES
+  {
+    Date=03/09/18;
+    Time=10:13:39;
+    Modified=Yes;
+    Version List=NAVW111.00,CSD1.00;
+  }
+  PROPERTIES
+  {
+    Target="Source Code Setup"(Page 279);
+    TargetPageType=Card;
+  }
+  CHANGES
+  {
+    { Insertion         ;InsertAfter=Control 15;
+                         ChangedElements=ControlCollection
+                         {
+                           { 27  ;1   ;Group     ;
+                                       CaptionML=ENU=Seminar Management;
+                                       GroupType=Group }
+
+                           { 25  ;2   ;Field     ;
+                                       SourceExpr=Seminar }
+
+                         }
+                          }
+    { Insertion         ;Documentation=BEGIN
+                                         CSD1.00 - 2013-04-01 - D. E. Veloper
+                                           Chapter 4 - Lab 1
+                                             - Added the Seminar Management FastTab
+                                             - Added the Seminar field to the Seminar Management FastTab
+                                       END;
+                                        }
+    { PropertyModification;
+                         Property=Version List;
+                         OriginalValue=NAVW111.00;
+                         ModifiedValue=NAVW111.00,CSD1.00 }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,56 @@
+OBJECT Table 123456733 Seminar Register
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/04/13;
+    Time=11:44:09;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Register;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;CaptionML=ENU=No. }
+    { 2   ;   ;From Entry No.      ;Integer       ;TableRelation="Seminar Ledger Entry";
+                                                   CaptionML=ENU=From Entry No. }
+    { 3   ;   ;To Entry No.        ;Integer       ;TableRelation="Seminar Ledger Entry";
+                                                   CaptionML=ENU=To Entry No. }
+    { 4   ;   ;Creation Date       ;Date          ;CaptionML=ENU=Creation Date }
+    { 5   ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=ENU=Source Code }
+    { 6   ;   ;User ID             ;Code20        ;TableRelation=User."User Name";
+                                                   OnLookup=VAR
+                                                              UserMgt@1000 : Codeunit 418;
+                                                            BEGIN
+                                                              UserMgt.LookupUserID("User ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=ENU=User ID }
+    { 7   ;   ;Journal Batch Name  ;Code10        ;CaptionML=ENU=Journal Batch Name }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Creation Date                            }
+    {    ;Source Code,Journal Batch Name,Creation Date }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-01 - D. E. Veloper
+        Chapter 4 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

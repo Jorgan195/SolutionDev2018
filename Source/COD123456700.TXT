@@ -1,0 +1,371 @@
+OBJECT Codeunit 123456700 Seminar-Post
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=00:43:24;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    TableNo=123456710;
+    OnRun=BEGIN
+            CLEARALL;
+            SeminarRegHeader := Rec;
+            WITH SeminarRegHeader DO BEGIN
+              TESTFIELD("Posting Date");
+              TESTFIELD("Document Date");
+              TESTFIELD("Seminar No.");
+              TESTFIELD(Duration);
+              TESTFIELD("Instructor Resource No.");
+              TESTFIELD("Room Resource No.");
+              TESTFIELD(Status,Status::Closed);
+
+              CheckDim;
+
+              SeminarRegLine.RESET;
+              SeminarRegLine.SETRANGE("Document No.","No.");
+              IF SeminarRegLine.ISEMPTY THEN
+                ERROR(Text001);
+
+              Window.OPEN(
+                '#1#################################\\' +
+                 Text002);
+              Window.UPDATE(1,STRSUBSTNO('%1 %2',Text003,"No."));
+
+              IF SeminarRegHeader."Posting No." = '' THEN BEGIN
+                TESTFIELD("Posting No. Series");
+                "Posting No." := NoSeriesMgt.GetNextNo("Posting No. Series","Posting Date",TRUE);
+                MODIFY;
+                COMMIT;
+              END;
+              SeminarRegLine.LOCKTABLE;
+
+              SourceCodeSetup.GET;
+              SourceCode := SourceCodeSetup.Seminar;
+
+              PstdSeminarRegHeader.INIT;
+              PstdSeminarRegHeader.TRANSFERFIELDS(SeminarRegHeader);
+              PstdSeminarRegHeader."No." := "Posting No.";
+              PstdSeminarRegHeader."No. Series" := "Posting No. Series";
+              PstdSeminarRegHeader."Source Code" := SourceCode;
+              PstdSeminarRegHeader."User ID" := USERID;
+              PstdSeminarRegHeader.INSERT;
+
+              Window.UPDATE(1,STRSUBSTNO(Text004,"No.",
+                PstdSeminarRegHeader."No."));
+
+              CopyCommentLines(
+                SeminarCommentLine."Document Type"::"Seminar Registration",
+                SeminarCommentLine."Document Type"::"Posted Seminar Registration",
+                "No.",PstdSeminarRegHeader."No.");
+              CopyCharges("No.",PstdSeminarRegHeader."No.");
+
+              LineCount := 0;
+              SeminarRegLine.RESET;
+              SeminarRegLine.SETRANGE("Document No.","No.");
+              IF SeminarRegLine.FINDSET THEN BEGIN
+                REPEAT
+                  LineCount := LineCount + 1;
+                  Window.UPDATE(2,LineCount);
+
+                  SeminarRegLine.TESTFIELD("Bill-to Customer No.");
+                  SeminarRegLine.TESTFIELD("Participant Contact No.");
+
+                  IF NOT SeminarRegLine."To Invoice" THEN BEGIN
+                    SeminarRegLine."Seminar Price" := 0;
+                    SeminarRegLine."Line Discount %" := 0;
+                    SeminarRegLine."Line Discount Amount" := 0;
+                    SeminarRegLine.Amount := 0;
+                  END;
+
+                  // Post seminar entry
+                  PostSeminarJnlLine(2); // Participant
+
+                  // Insert posted seminar registration line
+                  PstdSeminarRegLine.INIT;
+                  PstdSeminarRegLine.TRANSFERFIELDS(SeminarRegLine);
+                  PstdSeminarRegLine."Document No." := PstdSeminarRegHeader."No.";
+                  PstdSeminarRegLine.INSERT;
+                UNTIL SeminarRegLine.NEXT = 0;
+              END;
+
+              // Post charges to seminar ledger
+              PostCharges;
+
+              // Post instructor to seminar ledger
+              PostSeminarJnlLine(0); // Instructor
+
+              // Post seminar room to seminar ledger
+              PostSeminarJnlLine(1); // Room
+
+              DELETE;
+              SeminarRegLine.DELETEALL;
+
+              SeminarCommentLine.SETRANGE("Document Type",
+                SeminarCommentLine."Document Type"::"Seminar Registration");
+              SeminarCommentLine.SETRANGE("No.","No.");
+              SeminarCommentLine.DELETEALL;
+
+              SeminarCharge.SETRANGE(Description);
+              SeminarCharge.DELETEALL;
+            END;
+            Rec := SeminarRegHeader;
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      SeminarRegHeader@1021 : Record 123456710;
+      SeminarRegLine@1020 : Record 123456711;
+      PstdSeminarRegHeader@1019 : Record 123456718;
+      PstdSeminarRegLine@1018 : Record 123456719;
+      SeminarCommentLine@1017 : Record 123456704;
+      SeminarCommentLine2@1016 : Record 123456704;
+      SeminarCharge@1015 : Record 123456712;
+      PstdSeminarCharge@1014 : Record 123456721;
+      Room@1013 : Record 156;
+      Instructor@1012 : Record 156;
+      Customer@1011 : Record 18;
+      ResLedgEntry@1010 : Record 203;
+      SeminarJnlLine@1009 : Record 123456731;
+      SourceCodeSetup@1008 : Record 242;
+      ResJnlLine@1007 : Record 207;
+      SeminarJnlPostLine@1006 : Codeunit 123456732;
+      ResJnlPostLine@1005 : Codeunit 212;
+      NoSeriesMgt@1004 : Codeunit 396;
+      DimMgt@1003 : Codeunit 408;
+      Window@1002 : Dialog;
+      SourceCode@1001 : Code[10];
+      LineCount@1000 : Integer;
+      Text001@1029 : TextConst 'ENU=There is no participant to post.';
+      Text002@1028 : TextConst 'ENU=Posting lines              #2######\';
+      Text003@1027 : TextConst 'ENU=Registration';
+      Text004@1026 : TextConst 'ENU=Registration %1  -> Posted Reg. %2';
+      Text005@1025 : TextConst 'ENU=The combination of dimensions used in %1 is blocked. %2';
+      Text006@1024 : TextConst 'ENU=The combination of dimensions used in %1,  line no. %2 is blocked. %3';
+      Text007@1023 : TextConst 'ENU=The dimensions used in %1 are invalid. %2';
+      Text008@1022 : TextConst 'ENU=The dimensions used in %1, line no. %2 are invalid. %3';
+
+    LOCAL PROCEDURE CopyCommentLines@1(FromDocumentType@1000 : Integer;ToDocumentType@1001 : Integer;FromNumber@1002 : Code[20];ToNumber@1003 : Code[20]);
+    BEGIN
+      SeminarCommentLine.RESET;
+      SeminarCommentLine.SETRANGE("Document Type",FromDocumentType);
+      SeminarCommentLine.SETRANGE("No.",FromNumber);
+      IF SeminarCommentLine.FINDSET THEN BEGIN
+        REPEAT
+          SeminarCommentLine2 := SeminarCommentLine;
+          SeminarCommentLine2."Document Type" := ToDocumentType;
+          SeminarCommentLine2."No." := ToNumber;
+          SeminarCommentLine2.INSERT;
+        UNTIL SeminarCommentLine.NEXT = 0;
+      END;
+    END;
+
+    LOCAL PROCEDURE CopyCharges@2(FromNumber@1000 : Code[20];ToNumber@1001 : Code[20]);
+    BEGIN
+      SeminarCharge.RESET;
+      SeminarCharge.SETRANGE("Document No.",FromNumber);
+      IF SeminarCharge.FINDSET THEN BEGIN
+        REPEAT
+          PstdSeminarCharge.TRANSFERFIELDS(SeminarCharge);
+          PstdSeminarCharge."Document No." := ToNumber;
+          PstdSeminarCharge.INSERT;
+        UNTIL SeminarCharge.NEXT = 0;
+      END;
+    END;
+
+    LOCAL PROCEDURE PostResJnlLine@3(Resource@1000 : Record 156) : Integer;
+    BEGIN
+      WITH SeminarRegHeader DO BEGIN
+        Resource.TESTFIELD("Quantity Per Day");
+        ResJnlLine.INIT;
+        ResJnlLine."Entry Type" := ResJnlLine."Entry Type"::Usage;
+        ResJnlLine."Document No." := PstdSeminarRegHeader."No.";
+        ResJnlLine."Resource No." := Resource."No.";
+        ResJnlLine."Posting Date" := "Posting Date";
+        ResJnlLine."Reason Code" := "Reason Code";
+        ResJnlLine.Description := "Seminar Name";
+        ResJnlLine."Gen. Prod. Posting Group" := "Gen. Prod. Posting Group";
+        ResJnlLine."Posting No. Series" := "Posting No. Series";
+        ResJnlLine."Source Code" := SourceCode;
+        ResJnlLine."Resource No." := Resource."No.";
+        ResJnlLine."Unit of Measure Code" := Resource."Base Unit of Measure";
+        ResJnlLine."Unit Cost" := Resource."Unit Cost";
+        ResJnlLine."Qty. per Unit of Measure" := 1;
+        ResJnlLine.Quantity := Duration * Resource."Quantity Per Day";
+        ResJnlLine."Total Cost" := ResJnlLine."Unit Cost" * ResJnlLine.Quantity;
+        ResJnlLine."Seminar No." := "Seminar No.";
+        ResJnlLine."Seminar Registration No." := PstdSeminarRegHeader."No.";
+        ResJnlLine."Shortcut Dimension 1 Code" := "Shortcut Dimension 1 Code";
+        ResJnlLine."Shortcut Dimension 2 Code" := "Shortcut Dimension 2 Code";
+        ResJnlLine."Dimension Set ID" := "Dimension Set ID";
+        ResJnlPostLine.RunWithCheck(ResJnlLine);
+      END;
+
+      ResLedgEntry.FINDLAST;
+      EXIT(ResLedgEntry."Entry No.");
+    END;
+
+    LOCAL PROCEDURE PostSeminarJnlLine@4(ChargeType@1000 : 'Instructor,Room,Participant,Charge');
+    BEGIN
+      WITH SeminarRegHeader DO BEGIN
+        SeminarJnlLine.INIT;
+        SeminarJnlLine."Seminar No." := "Seminar No.";
+        SeminarJnlLine."Posting Date" := "Posting Date";
+        SeminarJnlLine."Document Date" := "Document Date";
+        SeminarJnlLine."Document No." := PstdSeminarRegHeader."No.";
+        SeminarJnlLine."Charge Type" := ChargeType;
+        SeminarJnlLine."Instructor Resource No." := "Instructor Resource No.";
+        SeminarJnlLine."Starting Date" := "Starting Date";
+        SeminarJnlLine."Seminar Registration No." := PstdSeminarRegHeader."No.";
+        SeminarJnlLine."Room Resource No." := "Room Resource No.";
+        SeminarJnlLine."Source Type" := SeminarJnlLine."Source Type"::Seminar;
+        SeminarJnlLine."Source No." := "Seminar No.";
+        SeminarJnlLine."Source Code" := SourceCode;
+        SeminarJnlLine."Reason Code" := "Reason Code";
+        SeminarJnlLine."Posting No. Series" := "Posting No. Series";
+        SeminarJnlLine."Shortcut Dimension 1 Code" := "Shortcut Dimension 1 Code";
+        SeminarJnlLine."Shortcut Dimension 2 Code" := "Shortcut Dimension 2 Code";
+        SeminarJnlLine."Dimension Set ID" := "Dimension Set ID";
+        CASE ChargeType OF
+          ChargeType::Instructor:
+            BEGIN
+              Instructor.GET("Instructor Resource No.");
+              SeminarJnlLine.Description := Instructor.Name;
+              SeminarJnlLine.Type := SeminarJnlLine.Type::Resource;
+              SeminarJnlLine.Chargeable := FALSE;
+              SeminarJnlLine.Quantity := Duration;
+              // Post to resource ledger
+              SeminarJnlLine."Res. Ledger Entry No." := PostResJnlLine(Instructor);
+            END;
+          ChargeType::Room:
+            BEGIN
+              Room.GET("Room Resource No.");
+              SeminarJnlLine.Description := Room.Name;
+              SeminarJnlLine.Type := SeminarJnlLine.Type::Resource;
+              SeminarJnlLine.Chargeable := FALSE;
+              SeminarJnlLine.Quantity := Duration;
+              // Post to resource ledger
+              SeminarJnlLine."Res. Ledger Entry No." := PostResJnlLine(Room);
+            END;
+          ChargeType::Participant:
+            BEGIN
+              SeminarJnlLine."Bill-to Customer No." := SeminarRegLine."Bill-to Customer No.";
+              SeminarJnlLine."Participant Contact No." := SeminarRegLine."Participant Contact No.";
+              SeminarJnlLine."Participant Name" := SeminarRegLine."Participant Name";
+              SeminarJnlLine.Description := SeminarRegLine."Participant Name";
+              SeminarJnlLine.Type := SeminarJnlLine.Type::Resource;
+              SeminarJnlLine.Chargeable := SeminarRegLine."To Invoice";
+              SeminarJnlLine.Quantity := 1;
+              SeminarJnlLine."Unit Price" := SeminarRegLine.Amount;
+              SeminarJnlLine."Total Price" := SeminarRegLine.Amount;
+              SeminarJnlLine."Dimension Set ID" := SeminarRegLine."Dimension Set ID";
+            END;
+          ChargeType::Charge:
+            BEGIN
+              SeminarJnlLine.Description := SeminarCharge.Description;
+              SeminarJnlLine."Bill-to Customer No." := SeminarCharge."Bill-to Customer No.";
+              SeminarJnlLine.Type := SeminarCharge.Type;
+              SeminarJnlLine.Quantity := SeminarCharge.Quantity;
+              SeminarJnlLine."Unit Price" := SeminarCharge."Unit Price";
+              SeminarJnlLine."Total Price" := SeminarCharge."Total Price";
+              SeminarJnlLine.Chargeable := SeminarCharge."To Invoice";
+            END;
+        END;
+        SeminarJnlPostLine.RunWithCheck(SeminarJnlLine);
+      END;
+    END;
+
+    LOCAL PROCEDURE PostCharges@5();
+    BEGIN
+      SeminarCharge.RESET;
+      SeminarCharge.SETRANGE("Document No.",SeminarRegHeader."No.");
+      IF SeminarCharge.FINDSET THEN
+        REPEAT
+          PostSeminarJnlLine(3); // Charge
+        UNTIL SeminarCharge.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE CheckDim@34();
+    VAR
+      SeminarRegLine2@1001 : Record 123456711;
+    BEGIN
+      SeminarRegLine2."Line No." := 0;
+      CheckDimValuePosting(SeminarRegLine2);
+      CheckDimComb(SeminarRegLine2);
+
+      SeminarRegLine2.SETRANGE("Document No.",SeminarRegHeader."No.");
+      IF SeminarRegLine2.FINDSET THEN
+        REPEAT
+          CheckDimComb(SeminarRegLine2);
+          CheckDimValuePosting(SeminarRegLine2);
+        UNTIL SeminarRegLine2.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE CheckDimComb@30(SeminarRegLine@1000 : Record 123456711);
+    BEGIN
+      IF SeminarRegLine."Line No." = 0 THEN
+        IF NOT DimMgt.CheckDimIDComb(SeminarRegHeader."Dimension Set ID") THEN
+          ERROR(
+            Text005,
+            SeminarRegHeader."No.",DimMgt.GetDimCombErr);
+
+      IF SeminarRegLine."Line No." <> 0 THEN
+        IF NOT DimMgt.CheckDimIDComb(SeminarRegLine."Dimension Set ID") THEN
+          ERROR(
+            Text006,
+            SeminarRegHeader."No.",SeminarRegLine."Line No.",DimMgt.GetDimCombErr);
+    END;
+
+    LOCAL PROCEDURE CheckDimValuePosting@28(VAR SeminarRegLine2@1000 : Record 123456711);
+    VAR
+      TableIDArr@1002 : ARRAY [10] OF Integer;
+      NumberArr@1003 : ARRAY [10] OF Code[20];
+    BEGIN
+      IF SeminarRegLine2."Line No." = 0 THEN BEGIN
+        TableIDArr[1] := DATABASE::Seminar;
+        NumberArr[1] := SeminarRegHeader."Seminar No.";
+        TableIDArr[2] := DATABASE::Resource;
+        NumberArr[2] := SeminarRegHeader."Instructor Resource No.";
+        TableIDArr[3] := DATABASE::Resource;
+        NumberArr[3] := SeminarRegHeader."Room Resource No.";
+        IF NOT DimMgt.CheckDimValuePosting(
+          TableIDArr,
+          NumberArr,
+          SeminarRegHeader."Dimension Set ID")
+        THEN
+          ERROR(
+            Text007,
+            SeminarRegHeader."No.",
+            DimMgt.GetDimValuePostingErr);
+      END ELSE BEGIN
+        TableIDArr[1] := DATABASE::Customer;
+        NumberArr[1] := SeminarRegLine2."Bill-to Customer No.";
+        IF NOT DimMgt.CheckDimValuePosting(
+          TableIDArr,
+          NumberArr,
+          SeminarRegLine2."Dimension Set ID")
+        THEN
+          ERROR(
+            Text008,
+            SeminarRegHeader."No.",SeminarRegLine2."Line No.",DimMgt.GetDimValuePostingErr);
+      END;
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-05 - D. E. Veloper
+        Chapter 4 - Lab 5
+          - Created new codeunit
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Integrated Dimensions functionality
+    }
+    END.
+  }
+}
+

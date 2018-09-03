@@ -1,0 +1,70 @@
+OBJECT Page 123456741 Seminar Manager Activities
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/09/13;
+    Time=00:52:08;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Manager Activities;
+    SourceTable=Table123456740;
+    PageType=CardPart;
+    OnOpenPage=BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                CaptionML=ENU=Registrations;
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 7       ;    ;Action    ;
+                                  CaptionML=ENU=New;
+                                  RunObject=Page 123456710;
+                                  RunPageMode=Create }
+                }
+                 }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Planned;
+                DrillDownPageID=Seminar Registration List }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr=Registered;
+                DrillDownPageID=Seminar Registration List }
+
+    { 3   ;1   ;Group     ;
+                CaptionML=ENU=For Posting;
+                GroupType=CueGroup }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr=Closed;
+                DrillDownPageID=Seminar Registration List }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-09-01 - D. E. Veloper
+        Chapter 9 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

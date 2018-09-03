@@ -1,0 +1,129 @@
+OBJECT Page 123456740 Seminar Manager Role Center
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/09/13;
+    Time=00:52:03;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    PageType=RoleCenter;
+    ActionList=ACTIONS
+    {
+      { 10      ;    ;ActionContainer;
+                      ActionContainerType=HomeItems }
+      { 11      ;1   ;Action    ;
+                      CaptionML=ENU=Registrations;
+                      RunObject=Page 123456713 }
+      { 12      ;1   ;Action    ;
+                      CaptionML=ENU=Seminars;
+                      RunObject=Page 123456701 }
+      { 13      ;1   ;Action    ;
+                      CaptionML=ENU=Instructors;
+                      RunObject=Page 77;
+                      RunPageView=WHERE(Type=CONST(Person)) }
+      { 14      ;1   ;Action    ;
+                      CaptionML=ENU=Rooms;
+                      RunObject=Page 77;
+                      RunPageView=WHERE(Type=CONST(Machine)) }
+      { 15      ;1   ;Action    ;
+                      CaptionML=ENU=Customers;
+                      RunObject=Page 22 }
+      { 16      ;1   ;Action    ;
+                      CaptionML=ENU=Contacts;
+                      RunObject=Page 5052 }
+      { 17      ;0   ;ActionContainer;
+                      ActionContainerType=ActivityButtons }
+      { 18      ;1   ;ActionGroup;
+                      CaptionML=ENU=Posted Documents;
+                      Image=RegisteredDocs }
+      { 19      ;2   ;Action    ;
+                      CaptionML=ENU=Posted Seminar Registrations;
+                      RunObject=Page 123456736 }
+      { 20      ;2   ;Action    ;
+                      CaptionML=ENU=Posted Sales Invoices;
+                      RunObject=Page 143 }
+      { 21      ;2   ;Action    ;
+                      CaptionML=ENU=Registers;
+                      RunObject=Page 123456722 }
+      { 22      ;    ;ActionContainer;
+                      ActionContainerType=NewDocumentItems }
+      { 23      ;1   ;Action    ;
+                      CaptionML=ENU=Seminar Registration;
+                      RunObject=Page 123456710;
+                      Image=NewTimesheet }
+      { 24      ;1   ;Action    ;
+                      CaptionML=ENU=Sales Invoice;
+                      RunObject=Page 43;
+                      Image=NewInvoice;
+                      RunPageMode=Create }
+      { 25      ;0   ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 26      ;1   ;Action    ;
+                      CaptionML=ENU=Create Invoices;
+                      RunObject=Report 123456700;
+                      Image=CreateJobSalesInvoice }
+      { 27      ;1   ;Action    ;
+                      CaptionML=ENU=Navigate;
+                      RunObject=Page 344;
+                      Image=Navigate }
+      { 28      ;0   ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 29      ;1   ;Action    ;
+                      CaptionML=ENU=Participant List;
+                      RunObject=Report 123456701;
+                      Image=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=RoleCenterArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Group }
+
+    { 4   ;2   ;Part      ;
+                PagePartID=Page123456741;
+                PartType=Page }
+
+    { 5   ;2   ;Part      ;
+                PartType=System;
+                SystemPartID=Outlook }
+
+    { 3   ;1   ;Group     ;
+                GroupType=Group }
+
+    { 6   ;2   ;Part      ;
+                PagePartID=Page123456742;
+                PartType=Page }
+
+    { 9   ;2   ;Part      ;
+                PagePartID=Page9150;
+                PartType=Page }
+
+    { 7   ;2   ;Part      ;
+                PagePartID=Page9175;
+                Visible=FALSE;
+                PartType=Page }
+
+    { 8   ;2   ;Part      ;
+                PartType=System;
+                SystemPartID=MyNotes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-09-01 - D. E. Veloper
+        Chapter 9 - Lab 1
+          - Created new table
+    }
+    END.
+  }
+}
+

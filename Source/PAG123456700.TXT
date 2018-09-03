@@ -1,0 +1,170 @@
+OBJECT Page 123456700 Seminar Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=22:43:35;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Card;
+    SourceTable=Table123456700;
+    PageType=Card;
+    ActionList=ACTIONS
+    {
+      { 18      ;    ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=ENU=&Seminar }
+      { 23      ;2   ;Action    ;
+                      ShortCutKey=Ctrl+F7;
+                      CaptionML=ENU=Ledger E&ntries;
+                      RunObject=Page 123456721;
+                      RunPageLink=Seminar No.=FIELD(No.);
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=WarrantyLedger;
+                      PromotedCategory=Process }
+      { 20      ;2   ;Action    ;
+                      CaptionML=ENU=Co&mments;
+                      RunObject=Page 124;
+                      RunPageLink=Table Name=CONST(Seminar),
+                                  No.=FIELD(No.);
+                      Image=Comment }
+      { 26      ;2   ;Action    ;
+                      ShortCutKey=F7;
+                      CaptionML=ENU=Statistics;
+                      RunObject=Page 123456714;
+                      RunPageLink=No.=FIELD(No.),
+                                  Date Filter=FIELD(Date Filter),
+                                  Charge Type Filter=FIELD(Charge Type Filter);
+                      Promoted=Yes;
+                      Image=Statistics;
+                      PromotedCategory=Process }
+      { 28      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=ENU=Dimensions;
+                      RunObject=Page 540;
+                      RunPageLink=Table ID=CONST(123456700),
+                                  No.=FIELD(No.);
+                      Image=Dimensions }
+      { 24      ;1   ;ActionGroup;
+                      CaptionML=ENU=&Registrations }
+      { 25      ;2   ;Action    ;
+                      CaptionML=ENU=&Registrations;
+                      RunObject=Page 123456713;
+                      RunPageLink=Seminar No.=FIELD(No.);
+                      Image=Timesheet;
+                      PromotedCategory=Process }
+      { 21      ;0   ;ActionContainer;
+                      ActionContainerType=NewDocumentItems }
+      { 22      ;1   ;Action    ;
+                      CaptionML=ENU=Seminar Registration;
+                      RunObject=Page 123456710;
+                      RunPageLink=Seminar No.=FIELD(No.);
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=NewTimesheet;
+                      PromotedCategory=New;
+                      RunPageMode=Create }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=General;
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="No.";
+                OnAssistEdit=BEGIN
+                               IF AssistEdit THEN
+                                 CurrPage.UPDATE;
+                             END;
+                              }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr=Name }
+
+    { 5   ;2   ;Field     ;
+                SourceExpr="Search Name" }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr="Seminar Duration" }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Minimum Participants" }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr="Maximum Participants" }
+
+    { 27  ;2   ;Field     ;
+                SourceExpr="Total Price" }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr=Blocked }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr="Last Date Modified" }
+
+    { 11  ;1   ;Group     ;
+                Name=Invoicing;
+                GroupType=Group }
+
+    { 12  ;2   ;Field     ;
+                SourceExpr="Gen. Prod. Posting Group" }
+
+    { 13  ;2   ;Field     ;
+                SourceExpr="VAT Prod. Posting Group" }
+
+    { 14  ;2   ;Field     ;
+                SourceExpr="Seminar Price" }
+
+    { 15  ;0   ;Container ;
+                ContainerType=FactBoxArea }
+
+    { 16  ;1   ;Part      ;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 17  ;1   ;Part      ;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      CSD1.00 - 2013-02-02 - D. E. Veloper
+        Chapter 2 - Lab 2
+          - Created new page
+
+      CSD1.00 - 2013-05-01 - D. E. Veloper
+        Chapter 5 - Lab 1
+          - Added actions:
+            - New (Seminar Registration)
+            - Seminar Ledger Entries
+            - Registrations
+
+      CSD1.00 - 2013-07-01 - D. E. Veloper
+        Chapter 7 - Lab 1
+          - Added the Total Price field to the General tab
+          - Added actions:
+            - Statistics
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added actions:
+            - Dimensions
+    }
+    END.
+  }
+}
+

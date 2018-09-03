@@ -1,0 +1,115 @@
+OBJECT Table 123456731 Seminar Journal Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=01/08/13;
+    Time=23:31:11;
+    Modified=Yes;
+    Version List=CSD1.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Seminar Journal Line;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Journal Template Name;Code10       ;CaptionML=ENU=Journal Template Name }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=ENU=Line No. }
+    { 3   ;   ;Seminar No.         ;Code20        ;TableRelation=Seminar;
+                                                   CaptionML=ENU=Seminar No. }
+    { 4   ;   ;Posting Date        ;Date          ;OnValidate=BEGIN
+                                                                VALIDATE("Document Date","Posting Date");
+                                                              END;
+
+                                                   CaptionML=ENU=Posting Date }
+    { 5   ;   ;Document Date       ;Date          ;CaptionML=ENU=Document Date }
+    { 6   ;   ;Entry Type          ;Option        ;CaptionML=ENU=Entry Type;
+                                                   OptionCaptionML=ENU=Registration,Cancelation;
+                                                   OptionString=Registration,Cancelation }
+    { 7   ;   ;Document No.        ;Code20        ;CaptionML=ENU=Document No. }
+    { 8   ;   ;Description         ;Text50        ;CaptionML=ENU=Description }
+    { 10  ;   ;Bill-to Customer No.;Code20        ;TableRelation=Customer;
+                                                   CaptionML=ENU=Bill-to Customer No. }
+    { 11  ;   ;Charge Type         ;Option        ;CaptionML=ENU=Charge Type;
+                                                   OptionCaptionML=ENU=Instructor,Room,Participant,Charge;
+                                                   OptionString=Instructor,Room,Participant,Charge }
+    { 12  ;   ;Type                ;Option        ;CaptionML=ENU=Type;
+                                                   OptionCaptionML=ENU=Resource,G/L Account;
+                                                   OptionString=Resource,G/L Account }
+    { 13  ;   ;Quantity            ;Decimal       ;CaptionML=ENU=Quantity;
+                                                   DecimalPlaces=0:5 }
+    { 14  ;   ;Unit Price          ;Decimal       ;CaptionML=ENU=Unit Price;
+                                                   AutoFormatType=2 }
+    { 15  ;   ;Total Price         ;Decimal       ;CaptionML=ENU=Total Price;
+                                                   AutoFormatType=1 }
+    { 16  ;   ;Participant Contact No.;Code20     ;TableRelation=Contact;
+                                                   CaptionML=ENU=Participant Contact No. }
+    { 17  ;   ;Participant Name    ;Text50        ;CaptionML=ENU=Participant Name }
+    { 18  ;   ;Chargeable          ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=ENU=Chargeable }
+    { 19  ;   ;Room Resource No.   ;Code20        ;TableRelation=Resource WHERE (Type=CONST(Machine));
+                                                   CaptionML=ENU=Room Resource No. }
+    { 20  ;   ;Instructor Resource No.;Code20     ;TableRelation=Resource WHERE (Type=CONST(Person));
+                                                   CaptionML=ENU=Instructor Resource No. }
+    { 21  ;   ;Starting Date       ;Date          ;CaptionML=ENU=Starting Date }
+    { 22  ;   ;Seminar Registration No.;Code20    ;CaptionML=ENU=Seminar Registration No. }
+    { 23  ;   ;Res. Ledger Entry No.;Integer      ;TableRelation="Res. Ledger Entry";
+                                                   CaptionML=ENU=Res. Ledger Entry No. }
+    { 30  ;   ;Source Type         ;Option        ;CaptionML=ENU=Source Type;
+                                                   OptionCaptionML=ENU=" ,Seminar";
+                                                   OptionString=[ ,Seminar] }
+    { 31  ;   ;Source No.          ;Code20        ;TableRelation=IF (Source Type=CONST(Seminar)) Seminar;
+                                                   CaptionML=ENU=Source No. }
+    { 32  ;   ;Journal Batch Name  ;Code10        ;CaptionML=ENU=Journal Batch Name }
+    { 33  ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=ENU=Source Code;
+                                                   Editable=No }
+    { 34  ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code";
+                                                   CaptionML=ENU=Reason Code }
+    { 35  ;   ;Posting No. Series  ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=ENU=Posting No. Series }
+    { 51  ;   ;Shortcut Dimension 1 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(1));
+                                                   CaptionML=ENU=Shortcut Dimension 1 Code;
+                                                   CaptionClass='1,2,1' }
+    { 52  ;   ;Shortcut Dimension 2 Code;Code20   ;TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(2));
+                                                   CaptionML=ENU=Shortcut Dimension 2 Code;
+                                                   CaptionClass='1,2,2' }
+    { 480 ;   ;Dimension Set ID    ;Integer       ;TableRelation="Dimension Set Entry";
+                                                   CaptionML=ENU=Dimension Set ID;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Journal Template Name,Journal Batch Name,Line No.;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE EmptyLine@1() : Boolean;
+    BEGIN
+      EXIT(
+        ("Seminar No." = '')
+        AND (Quantity = 0));
+    END;
+
+    BEGIN
+    {
+      CSD1.00 - 2013-04-01 - D. E. Veloper
+        Chapter 4 - Lab 1
+          - Created new table
+
+      CSD1.00 - 2013-08-01 - D. E. Veloper
+        Chapter 8 - Lab 1
+          - Added fields:
+            - Shortcut Dimension 1 Code
+            - Shortcut Dimension 2 Code
+            - Dimension Set ID
+    }
+    END.
+  }
+}
+
